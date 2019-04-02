@@ -39,6 +39,28 @@ columns:
 
 ## task
 
+- 基本操作
+  - format格式化
+      - 日期
+      - 金额
+  - calculate计算
+      - 对两个字段进行计算，一般是数量计算
+  - 打平
+      - 主从表转换成单表
+  - aggregate聚合
+      - 根据groupby条件进行聚合
+      - 聚合类型：count, avg, sum
+      - 支持定义输出格式
+  - filter过滤
+  - join连接(左、右、全、内)
+  - select选择(选择需要的字段)
+      - 过滤掉不需要的字段
+- 特殊操作
+  - dispatch分摊
+      - 根据特定条件，将数量按目标顺序进行从头到为分摊
+  - accumulate累加
+      - 根据特定条件，将数量更新到目标记录中
+
 ## pipeline
 
 ```

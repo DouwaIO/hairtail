@@ -7,7 +7,7 @@ import (
 
 	"github.com/urfave/cli"
 
-	"github.com/DouwaIO/dataflow/src/router"
+	"github.com/DouwaIO/hairtail/src/router"
 )
 
 func main() {
@@ -19,29 +19,20 @@ func main() {
 	// app.Before = before
 	app.Flags = []cli.Flag{
 		cli.BoolFlag{
-			EnvVar: "DRONE_DEBUG",
+			EnvVar: "HTAIL_DEBUG",
 			Name:   "debug",
 			Usage:  "enable server debug mode",
 		},
 		cli.StringFlag{
-			EnvVar: "DRONE_SERVER_HOST,DRONE_HOST",
+			EnvVar: "HTAIL_SERVER_HOST,HTAIL_ADDR",
 			Name:   "server-host",
 			Usage:  "server fully qualified url (<scheme>://<host>)",
 		},
 		cli.StringFlag{
-			EnvVar: "DRONE_SERVER_ADDR",
+			EnvVar: "HTAIL_SERVER_ADDR,HTAIL_ADDR",
 			Name:   "server-addr",
 			Usage:  "server address",
 			Value:  ":8000",
-		},
-		cli.StringSliceFlag{
-			EnvVar: "DRONE_VOLUME",
-			Name:   "volume",
-		},
-		cli.Int64Flag{
-			EnvVar: "DRONE_LIMIT_CPU_QUOTA",
-			Name:   "limit-cpu-quota",
-			Usage:  "impose a cpu quota",
 		},
 	}
 
