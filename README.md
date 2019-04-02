@@ -39,6 +39,11 @@ columns:
 
 ## task
 
+- 数据获取
+  - mq
+  - url
+    - 主动
+    - 被动
 - 基本操作
   - format格式化
       - 日期
@@ -60,6 +65,9 @@ columns:
       - 根据特定条件，将数量按目标顺序进行从头到为分摊
   - accumulate累加
       - 根据特定条件，将数量更新到目标记录中
+- 输出数据
+  - output
+  - url
 
 ## pipeline
 
