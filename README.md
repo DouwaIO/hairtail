@@ -1,11 +1,11 @@
 # Hairtail
 
 
-## data model
+## schema
 
 ```
 version: v1
-kind: model
+kind: schema
 name: storage
 columns:
   - name: id
