@@ -2,14 +2,27 @@ package router
 
 import (
 	"net/http"
+	"time"
 
+	"github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
+	"github.com/DouwaIO/hairtail/src/server"
+	"github.com/DouwaIO/hairtail/src/router/middleware/ginrus"
+	"github.com/DouwaIO/hairtail/src/router/middleware/header"
 )
 
 // Load loads the router
-func Load() http.Handler {
+func Load(middleware ...gin.HandlerFunc) http.Handler {
 
 	e := gin.New()
+	e.Use(gin.Recovery())
+
+	e.Use(ginrus.Ginrus(logrus.StandardLogger(), time.RFC3339, true))
+
+	e.Use(header.NoCache)
+	e.Use(header.Options)
+	e.Use(header.Secure)
+	e.Use(middleware...)
 
 	// e.Use(header.NoCache)
 	// e.Use(header.Options)
@@ -23,6 +36,7 @@ func Load() http.Handler {
 
 	// e.GET("/version", server.Version)
 	// e.GET("/healthz", server.Health)
+	e.GET("/api/test", server.Test)
 
 	return e
 }

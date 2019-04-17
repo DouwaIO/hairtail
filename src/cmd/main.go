@@ -2,12 +2,15 @@ package main
 
 import (
 	"fmt"
-    "net/http"
+	"net/http"
 	"os"
 
 	"github.com/urfave/cli"
 
 	"github.com/DouwaIO/hairtail/src/router"
+	//"github.com/DouwaIO/hairtail/src/store"
+	"github.com/DouwaIO/hairtail/src/store/datastore"
+	"github.com/DouwaIO/hairtail/src/router/middleware"
 )
 
 func main() {
@@ -44,11 +47,17 @@ func main() {
 
 func run(c *cli.Context) error {
 	// debug level if requested by user
-	if c.Bool("debug") {
-	} else {
-	}
+	//if c.Bool("debug") {
+	//} else {
+	//}
+	store_ := datastore.New(
+		"sqlite3",
+		"drone.sqlite",
+	)
 
-	handler := router.Load()
+	handler := router.Load(
+		middleware.Store(c, store_),
+	)
 
 	// start the server without tls enabled
 	if !c.Bool("lets-encrypt") {
