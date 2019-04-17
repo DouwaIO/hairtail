@@ -39,11 +39,6 @@ columns:
 
 ## task
 
-```
-version: v1
-kind: task
-```
-
 - 数据获取
   - mq
   - url
