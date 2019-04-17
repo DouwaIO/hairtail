@@ -10,6 +10,7 @@ mkdir -p $GOSRC
 # ln -s $CURPATH $GOSRC > /dev/null 2>&1
 ln -s $CURPATH $GOSRC
 
+APPPATH="${GOSRC}/hairtail"
 SRCPATH="${GOSRC}/hairtail/src"
 
 echo "go path: ${GOPATH}"
@@ -21,6 +22,6 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
 echo "compile server starting"
 cd $SRCPATH/cmd
-go build -o dist/htail
+go build -o $APPPATH/dist/htail
 echo "compile server ending"
 echo
