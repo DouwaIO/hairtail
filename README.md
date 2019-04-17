@@ -39,6 +39,11 @@ columns:
 
 ## task
 
+```
+version: v1
+kind: task
+```
+
 - 数据获取
   - mq
   - url
@@ -72,6 +77,8 @@ columns:
 ## pipeline
 
 ```
+version: v1
+kind: pipeline
 steps:
   - name: input_data_from_mq
     desc: 从mq中监听数据的获取
