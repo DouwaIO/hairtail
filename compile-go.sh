@@ -10,6 +10,7 @@ mkdir -p $GOSRC
 # ln -s $CURPATH $GOSRC > /dev/null 2>&1
 ln -s $CURPATH $GOSRC
 
+APPPATH="${GOSRC}/hairtail"
 SRCPATH="${GOSRC}/hairtail/src"
 
 echo "go path: ${GOPATH}"
