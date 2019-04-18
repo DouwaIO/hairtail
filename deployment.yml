@@ -1,0 +1,63 @@
+kind: Service
+apiVersion: v1
+metadata:
+  name: hairtail
+  labels:
+    app: hairtail
+    tier: hairtail
+    type: go
+spec:
+  type: ClusterIP 
+  selector:
+    app: hairtail
+    tier: hairtail
+    type: go
+  ports:
+  - port: 80
+    targetPort: http
+    name: http
+---
+kind: Deployment
+apiVersion: apps/v1
+metadata:
+  name: hairtail
+spec:
+  replicas: {{REPLICAS}}
+  selector:
+    matchLabels:
+      app: hairtail
+      tier: hairtail
+      type: go
+  template:
+    metadata:
+      labels:
+        app: hairtail
+        tier: hairtail
+        type: go
+    spec:
+      restartPolicy: Always
+      imagePullSecrets:
+        - name: coderun
+      containers:
+        - name: hairtail
+          image: r.crun.top/hsbs/jwj831223/hairtail:{{CI_COMMIT_BRANCH}}
+          imagePullPolicy: Always
+          ports:
+            - name: http
+              containerPort: 8080
+
+
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: hairtail
+spec:
+  rules:
+  - host: {{INGRESS}}
+    http:
+      paths:
+      - path: /
+        backend:
+          serviceName: hairtail
+          servicePort: 80
