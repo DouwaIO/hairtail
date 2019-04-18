@@ -7,13 +7,14 @@ metadata:
     tier: hairtail
     type: go
 spec:
-  type: ClusterIP 
+  type: NodePort 
   selector:
     app: hairtail
     tier: hairtail
     type: go
   ports:
   - port: 80
+    nodePort: 31111
     targetPort: http
     name: http
 ---
@@ -40,11 +41,15 @@ spec:
         - name: coderun
       containers:
         - name: hairtail
-          image: r.crun.top/hsbs/jwj831223/hairtail:{{CI_COMMIT_BRANCH}}
+          image: r.crun.top/hsbs/hairtail:{{CI_COMMIT_BRANCH}}
           imagePullPolicy: Always
           ports:
             - name: http
               containerPort: 8080
+
+          env:
+            - name: CI_COMMIT
+              value: {{CI_COMMIT}}
 
 
 ---
@@ -61,3 +66,4 @@ spec:
         backend:
           serviceName: hairtail
           servicePort: 80
+  
