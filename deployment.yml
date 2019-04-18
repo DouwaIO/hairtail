@@ -7,13 +7,14 @@ metadata:
     tier: hairtail
     type: go
 spec:
-  type: ClusterIP 
+  type: NodePort 
   selector:
     app: hairtail
     tier: hairtail
     type: go
   ports:
   - port: 80
+    nodePort: 33331
     targetPort: http
     name: http
 ---
@@ -65,3 +66,4 @@ spec:
         backend:
           serviceName: hairtail
           servicePort: 80
+  
