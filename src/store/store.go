@@ -1,26 +1,41 @@
 package store
 
 import (
-	"context"
+//	"context"
 
 	"github.com/DouwaIO/hairtail/src/model"
 )
 
 type Store interface {
-	// GetUser gets a user by unique ID.
-	GetUser(int64) (*model.User, error)
-	// CreateUser creates a new user account.
-	CreateUser(*model.User) error
+	// GetData gets a user by unique ID.
+	GetData(string, string) (*model.Data, error)
+	// CreateData creates a new user account.
+	CreateData(*model.Data) error
 
-	// UpdateUser updates a user account.
-	UpdateUser(*model.User) error
+	// UpdateData updates a user account.
+	UpdateData(*model.Data) error
 
-	// DeleteUser deletes a user account.
-	DeleteUser(*model.User) error
+	// DeleteData deletes a user account.
+	DeleteData(*model.Data) error
 
-}
+	GetPipeline(string) (*model.Pipeline, error)
+	// CreateData creates a new user account.
+	CreatePipeline(*model.Pipeline) error
 
-// GetUser gets a user by unique ID.
-func GetUser(c context.Context, id int64) (*model.User, error) {
-	return FromContext(c).GetUser(id)
+	// UpdateData updates a user account.
+	UpdatePipeline(*model.Pipeline) error
+
+	// DeleteData deletes a user account.
+	DeletePipeline(*model.Pipeline) error
+
+	GetSchema(string) (*model.Schema, error)
+	// CreateData creates a new user account.
+	CreateSchema(*model.Schema) error
+
+	// UpdateData updates a user account.
+	UpdateSchema(*model.Schema) error
+
+	// DeleteData deletes a user account.
+	DeleteSchema(*model.Schema) error
+
 }
