@@ -16,18 +16,74 @@ package step
 
 import (
 	"log"
+	"reflect"
+	"errors"
 //	"os"
 //	"github.com/Sirupsen/logrus"
 	"github.com/streadway/amqp"
+	"github.com/DouwaIO/hairtail/src/pipeline"
+	"github.com/DouwaIO/hairtail/src/model"
 )
 
-// var db *gorm.DB
+var (
+	funcs = map[string]interface{}{"MQ_Send": Send_Message, "HTTP_Send": HTTP_Send,  "test":Test}
+)
 
-// New creates a database connection for the given driver and datasource
-// and returns a new Store.
-func New(config string) error {
-	MQ("amqp","aa","aa","aa","aa")
-	return nil
+func Call(m map[string]interface{}, name string, params ... interface{}) (result []reflect.Value, err error) {
+    f := reflect.ValueOf(m[name])
+    if len(params) != f.Type().NumIn() {
+        err = errors.New("The number of params is not adapted.")
+        return
+    }
+    in := make([]reflect.Value, len(params))
+    for k, param := range params {
+        in[k] = reflect.ValueOf(param)
+    }
+    result = f.Call(in)
+    return
+}
+//Call(funcs, "foo")
+//Call(funcs, "bar", 1, 2, 3)
+
+func StartService(service *model.Service) error {
+	parsed, err := pipeline.ParseString(service.Data)
+	if err != nil {
+		return errors.New("yaml type error")
+	}
+	log.Printf("type %s", service.Type)
+	if service.Type == "MQ" {
+		for _, service2 := range parsed.Services {
+			if service.Type == service2.Type {
+				go MQ(service2.Settings["protocol"].(string), service2.Settings["host"].(string), service2.Settings["user"].(string), service2.Settings["topic"].(string), service2.Settings["ackPolicy"].(string), service.Data)
+			}
+		}
+	}
+	return errors.New("not")
+	//parsed, err := pipeline.ParseString(config)
+	//if err != nil {
+	//	return errors.New("yaml type error")
+	//}
+
+	//if len(parsed.Pipeline) > 0 {
+	//	for _, pipeline := range parsed.Pipeline {
+	//		if _, ok := funcs[pipeline.Type]; ok {
+	//			if pipeline.Type == "MQ_Send" {
+	//				Call(funcs, pipeline.Type, pipeline.Settings["protocol"], pipeline.Settings["host"], pipeline.Settings["user"], pipeline.Settings["topic"])
+	//			}
+	//			if pipeline.Type == "HTTP_Send" {
+	//				Call(funcs, pipeline.Type, pipeline.Settings["url"], pipeline.Settings["data"])
+	//			}
+	//			if pipeline.Type == "test" {
+	//				Call(funcs, pipeline.Type)
+	//			}
+	//		} else {
+	//			return nil
+	//		}
+
+	//	}
+	//}
+	//return nil
+	//MQ("amqp","aa","aa","aa","aa")
 	//return &datastore{
 	//	DB:     open(driver, config),
 	//	driver: driver,
@@ -35,8 +91,50 @@ func New(config string) error {
 	//}
 }
 
-func MQ(protocol, host, user, topic, ackPolicy string) error {
+// New creates a database connection for the given driver and datasource
+// and returns a new Store.
+func New(config string) error {
+	parsed, err := pipeline.ParseString(config)
+	if err != nil {
+		return errors.New("yaml type error")
+	}
+
+	if len(parsed.Pipeline) > 0 {
+		for _, pipeline := range parsed.Pipeline {
+			if _, ok := funcs[pipeline.Type]; ok {
+				if pipeline.Type == "MQ_Send" {
+					Call(funcs, pipeline.Type, pipeline.Settings["protocol"], pipeline.Settings["host"], pipeline.Settings["user"], pipeline.Settings["topic"])
+				}
+				if pipeline.Type == "HTTP_Send" {
+					Call(funcs, pipeline.Type, pipeline.Settings["url"], pipeline.Settings["data"])
+				}
+				if pipeline.Type == "test" {
+					Call(funcs, pipeline.Type)
+				}
+			} else {
+				return nil
+			}
+
+		}
+	}
+	return nil
+	//MQ("amqp","aa","aa","aa","aa")
+	//return &datastore{
+	//	DB:     open(driver, config),
+	//	driver: driver,
+	//	config: config,
+	//}
+}
+
+
+func Test() error {
+	log.Printf("test testtest ")
+	return nil
+}
+
+func MQ(protocol, host, user, topic, ackPolicy, data string) error {
 	//db,err := gorm.Open("sqlite3", "test.db")
+	log.Printf("helllllllllllllllll world")
 	if protocol == "amqp" {
 		conn, err := amqp.Dial("amqp://root:123456@47.97.182.182:32222/")
 		if err != nil {
@@ -79,6 +177,10 @@ func MQ(protocol, host, user, topic, ackPolicy string) error {
 		go func() {
 		    for d := range msgs {
 		        log.Printf("Received a message: %s", d.Body)
+			err := New(data)
+			if err != nil {
+			    return
+			}
 		    }
 		}()
 		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")

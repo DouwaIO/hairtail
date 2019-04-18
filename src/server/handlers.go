@@ -65,7 +65,6 @@ func Pipeline(c *gin.Context) {
 
 	_, err = store.FromContext(c).GetPipeline(parsed.Name)
 	if err != nil {
-
 		gen_id := utils.GeneratorId()
 		newscd := &model.Pipeline{
 			ID: gen_id,
@@ -78,9 +77,36 @@ func Pipeline(c *gin.Context) {
 			return
 		}
 		if len(parsed.Services) > 0 {
-			go step.New("test")
+			for _, service := range parsed.Services {
+				_, err = store.FromContext(c).GetService(service.Name, newscd.ID)
+				if err != nil {
+					gen_id := utils.GeneratorId()
+					newser := &model.Service{
+						ID: gen_id,
+						Name: service.Name,
+						Type: service.Type,
+						Pipeline: newscd.ID,
+						Data: in.Data,
+					}
+					err = store.FromContext(c).CreateService(newser)
+					if err != nil {
+						c.String(500, err.Error())
+						return
+					}
+					err = step.StartService(newser)
+					if err != nil {
+						c.String(500, err.Error())
+						return
+					}
+				}
+			}
 		} else {
-			step.Send_Message("amqp", "aa","aa","aa")
+			//step.Send_Message("amqp", "aa","aa","aa")
+			err = step.New(in.Data)
+			if err != nil {
+				c.String(500, err.Error())
+				return
+			}
 
 		}
 		c.JSON(200, newscd)

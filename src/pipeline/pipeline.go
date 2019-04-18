@@ -22,6 +22,7 @@ type (
 		Name          string                    `yaml:"name"`
 		Desc          string                    `yaml:"desc,omitempty"`
 		Type          string                    `yaml:"type"`
+		Settings      map[string]interface{}    `yaml:"settings,omitempty"`
 		Vargs         map[string]interface{}    `yaml:",inline"`
 	}
 

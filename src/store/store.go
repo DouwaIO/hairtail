@@ -38,4 +38,16 @@ type Store interface {
 	// DeleteData deletes a user account.
 	DeleteSchema(*model.Schema) error
 
+	GetService(string, string) (*model.Service, error)
+
+	GetServiceList(string) ([]*model.Service, error)
+	// CreateService creates a new user account.
+	CreateService(*model.Service) error
+
+	// UpdateService updates a user account.
+	UpdateService(*model.Service) error
+
+	// DeleteService deletes a user account.
+	DeleteService(*model.Service) error
+
 }
