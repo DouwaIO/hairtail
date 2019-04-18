@@ -15,7 +15,7 @@
 package datastore
 
 import (
-	"os"
+	// "os"
 
 	"github.com/DouwaIO/hairtail/src/store"
 
@@ -23,6 +23,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 )
 
 var db *gorm.DB
@@ -57,7 +58,9 @@ func New(driver, config string) store.Store {
 // driver and connection string and returns a store.
 func open(driver, config string) *gorm.DB {
 	//db,err := gorm.Open("sqlite3", "test.db")
-	db,err := gorm.Open("mysql", os.Getenv("DRONE_DATABASE_DATASOURCE"))
+	// os.Getenv("DRONE_DATABASE_DATASOURCE")
+	DRONE_DATABASE_DATASOURCE := "host=47.110.154.127 port=30172 user=postgres dbname=hairtail sslmode=disable password=huansi@2017"
+	db,err := gorm.Open("postgres", DRONE_DATABASE_DATASOURCE)
 		if err != nil {
 			logrus.Errorln(err)
 			logrus.Fatalln("database ping attempts failed")
