@@ -3,24 +3,24 @@ package schema
 import (
 	"io"
 	"io/ioutil"
-	"os"
+	//"os"
 
 	"gopkg.in/yaml.v2"
 )
 
 type (
 	Schema struct {
-		Version string `yaml:"version,omitempty"`
-		Kind    string `yaml:"kind,omitempty"`
+		Version string `yaml:"version"`
+		Kind    string `yaml:"kind"`
 		// 保留对之前版本的兼容
-		Name    string    `yaml:"name,omitempty"`
-		Columns []*Column `yaml:"columns,omitempty"`
+		Name    string    `yaml:"name"`
+		Columns []*Column `yaml:"columns"`
 	}
 
 	Column struct {
-		Name    string `yaml:"name,omitempty"`
+		Name    string `yaml:"name"`
 		Desc    string `yaml:"desc,omitempty"`
-		Type    string `yaml:"type,omitempty"`
+		Type    string `yaml:"type"`
 		Default string `yaml:"default,omitempty"`
 	}
 )
