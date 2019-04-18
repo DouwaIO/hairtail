@@ -40,7 +40,7 @@ spec:
         - name: coderun
       containers:
         - name: hairtail
-          image: r.crun.top/hsbs/hairtail:{{CI_COMMIT_BRANCH}}
+          image: r.crun.top/hsbs/jwj831223/hairtail:{{CI_COMMIT_BRANCH}}
           imagePullPolicy: Always
           ports:
             - name: http
@@ -52,7 +52,6 @@ apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
   name: hairtail
-  namespace: default
 spec:
   rules:
   - host: {{INGRESS}}
