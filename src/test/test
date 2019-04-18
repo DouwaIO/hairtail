@@ -1,0 +1,2 @@
+version: v1\nkind: model\nname: storage\ncolumns:\n  - name: id\n    desc: a identity data\n    type: int\n    default: 0\n  - name: name\n    desc: the name of people\n    type: int\n    default: ''\n  - name: sex\n    desc: '0: male, 1: female'\n    type: int\n    default: 0
+version: v1\nkind: pipeline\nname: test\nsteps:\n  - name: outputToOtherModel\n    desc: 验证上个步骤获取的数据是否符合定义的数据模型\n    type: outputDataModel\n    settings:\n      model: storage

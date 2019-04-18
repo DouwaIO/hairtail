@@ -13,6 +13,8 @@ type (
 	Schema struct {
 		Version string `yaml:"version"`
 		Kind    string `yaml:"kind"`
+		Name    string `yaml:"name"`
+		Services []*Container `yaml:"services,omitempty"`
 		Pipeline []*Container `yaml:"steps"`
 	}
 
