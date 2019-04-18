@@ -14,7 +14,7 @@ spec:
     type: go
   ports:
   - port: 80
-    nodePort: 33331
+    nodePort: 31111
     targetPort: http
     name: http
 ---
