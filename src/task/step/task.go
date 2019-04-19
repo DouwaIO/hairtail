@@ -26,7 +26,7 @@ import (
 )
 
 var (
-	funcs = map[string]interface{}{"MQ_Send": MQSend, "HTTP_Send": HTTPSend,  "test":Test}
+	funcs = map[string]interface{}{"MQ_Send": MQSend, "HTTP_Send": HTTPSend,  "test":Test, "test2":Test2}
 )
 
 func Call(m map[string]interface{}, name string, params ... interface{}) (result []reflect.Value, err error) {
@@ -79,6 +79,11 @@ func New(config string, data []byte) error {
 				if pipeline.Type == "test" {
 					Call(funcs, pipeline.Type, data)
 				}
+				if pipeline.Type == "test2" {
+					result, _ := Call(funcs, pipeline.Type, data)
+					data = result[0].Interface().([]byte)
+					log.Printf("Data :", string(data))
+				}
 			} else {
 				return nil
 			}
@@ -88,6 +93,11 @@ func New(config string, data []byte) error {
 	return nil
 }
 
+func Test2(data []byte) ([]byte, error) {
+	cc := string(data) + "qweqwe"
+	log.Printf("Data :", string(data))
+	return []byte(cc), nil
+}
 
 func Test(data []byte) error {
 	log.Printf("Data :", string(data))
