@@ -7,8 +7,8 @@ import (
     "io/ioutil"
 )
 
-func HTTP_Send(url, data string) {
-    reader := bytes.NewReader([]byte(data))
+func HTTPSend(url string, data []byte) {
+    reader := bytes.NewReader(data)
     request, err := http.NewRequest("POST", url, reader)
     if err != nil {
         fmt.Println(err.Error())

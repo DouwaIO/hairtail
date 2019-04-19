@@ -102,7 +102,7 @@ func Pipeline(c *gin.Context) {
 			}
 		} else {
 			//step.Send_Message("amqp", "aa","aa","aa")
-			err = step.New(in.Data)
+			err = step.New(in.Data, []byte(in.Context))
 			if err != nil {
 				c.String(500, err.Error())
 				return
