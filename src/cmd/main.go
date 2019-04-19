@@ -37,6 +37,12 @@ func main() {
 			Usage:  "server address",
 			Value:  ":8000",
 		},
+		cli.StringFlag{
+			EnvVar: "HTAIL_DB_URL",
+			Name:   "db-url",
+			Usage:  "server address",
+			Value:  "host=47.110.154.127 port=30172 user=postgres dbname=hairtail sslmode=disable password=huansi@2017",
+		},
 	}
 
 	if err := app.Run(os.Args); err != nil {
@@ -51,8 +57,7 @@ func run(c *cli.Context) error {
 	//} else {
 	//}
 	store_ := datastore.New(
-		"sqlite3",
-		"drone.sqlite",
+		c.String("db-url"),
 	)
 
 	handler := router.Load(

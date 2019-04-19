@@ -41,11 +41,11 @@ type datastore struct {
 
 // New creates a database connection for the given driver and datasource
 // and returns a new Store.
-func New(driver, config string) store.Store {
+func New(driver string) store.Store {
 	return &datastore{
-		DB:     open(driver, config),
+		DB:     open(driver),
 		driver: driver,
-		config: config,
+		// config: config,
 	}
 }
 
@@ -56,10 +56,10 @@ func New(driver, config string) store.Store {
 
 // open opens a new database connection with the specified
 // driver and connection string and returns a store.
-func open(driver, config string) *gorm.DB {
+func open(driver string) *gorm.DB {
 	//db,err := gorm.Open("sqlite3", "test.db")
 	// os.Getenv("DRONE_DATABASE_DATASOURCE")
-	DRONE_DATABASE_DATASOURCE := "host=47.110.154.127 port=30172 user=postgres dbname=hairtail sslmode=disable password=huansi@2017"
+	DRONE_DATABASE_DATASOURCE := driver
 	db,err := gorm.Open("postgres", DRONE_DATABASE_DATASOURCE)
 		if err != nil {
 			logrus.Errorln(err)
