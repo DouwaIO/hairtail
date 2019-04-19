@@ -134,8 +134,9 @@ func Test() error {
 
 func MQ(protocol, host, user, topic, ackPolicy, data string) error {
 	//db,err := gorm.Open("sqlite3", "test.db")
-	log.Printf("helllllllllllllllll world")
+	//log.Printf("helllllllllllllllll world")
 	if protocol == "amqp" {
+		//mq_connct := protocol+"://"+user+":"+pwd+"@"+host+"/"
 		conn, err := amqp.Dial("amqp://root:123456@47.97.182.182:32222/")
 		if err != nil {
 			return err
@@ -150,6 +151,7 @@ func MQ(protocol, host, user, topic, ackPolicy, data string) error {
 
 		q, err := ch.QueueDeclare(
 		    "hello", // name
+
 		    false,   // durable
 		    false,   // delete when unused
 		    false,   // exclusive

@@ -15,7 +15,7 @@ import (
 
 func main() {
 	app := cli.NewApp()
-	app.Name = "drone-server"
+	app.Name = "hairtail"
 	// app.Version = version.Version.String()
 	app.Version = "0.1"
 	app.Action = run

@@ -59,14 +59,14 @@ func New(driver string) store.Store {
 func open(driver string) *gorm.DB {
 	//db,err := gorm.Open("sqlite3", "test.db")
 	// os.Getenv("DRONE_DATABASE_DATASOURCE")
-	DRONE_DATABASE_DATASOURCE := driver
-	db,err := gorm.Open("postgres", DRONE_DATABASE_DATASOURCE)
+	//DRONE_DATABASE_DATASOURCE := driver
+	db,err := gorm.Open("postgres", driver)
 		if err != nil {
 			logrus.Errorln(err)
 			logrus.Fatalln("database ping attempts failed")
 		}
 		logrus.Infof("连接成功了")
-		if err := setupDatabase(driver, db); err != nil {
+		if err := setupDatabase(db); err != nil {
 			logrus.Errorln(err)
 			logrus.Fatalln("migration failed")
 		}
@@ -76,7 +76,7 @@ func open(driver string) *gorm.DB {
 
 // helper function to setup the databsae by performing
 // automated database migration steps.
-func setupDatabase(driver string, db *gorm.DB) error {
+func setupDatabase(db *gorm.DB) error {
 	db.Set("gorm:table_options", "charset=utf8")
 	return db.AutoMigrate(&model.Schema{},
 			      &model.Service{},
