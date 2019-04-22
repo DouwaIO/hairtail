@@ -75,16 +75,6 @@ columns:
 version: v1
 kind: pipeline
 steps:
-  - name: input_data_from_mq
-    desc: 从mq中监听数据的获取
-    type: mqGet
-    settings:
-      protocol: amop
-      host:
-      user:
-      topic:
-      ackPolicy: immediate
-
   - name: checkmqdatafrombeforestep
     desc: 验证上个步骤获取的数据是否符合定义的数据模型
     type: dataCheck
@@ -96,4 +86,14 @@ steps:
     type: outputDataModel
     settings:
       model: storage1
+services:
+  - name: input_data_from_mq
+    desc: 从mq中监听数据的获取
+    type: mqGet
+    settings:
+      protocol: amop
+      host:
+      user:
+      topic:
+      ackPolicy: immediate
 ```
