@@ -1,34 +1,19 @@
 steps:
-  compile:
-    image: golang:1.8.5
-    commands:
-      - ./compile-go.sh
-
-  build-server:
-    group: build
-    image: douwa/docker
-    repo: ${APP_NAME}-server
-    regname: douwa
-    dockerfile: src/dougo/Dockerfile.server
-    context: src/dougo
-    tags: ${CI_COMMIT_BRANCH}
-
-  build-agent:
-    group: build
-    image: douwa/docker
-    repo: ${APP_NAME}-agent
-    regname: douwa
-    dockerfile: src/dougo/Dockerfile.agent
-    context: src/dougo
+  build:
+    image: crun/docker
+    repo_name: ${APP_NAME}
+    registry_name: coderun
+    dockerfile: Dockerfile
+    context: 
     tags: ${CI_COMMIT_BRANCH}
 
   deploy:
-    image: douwa/rssh
-    commands:
-      - rcopy deploy/${CI_COMMIT_BRANCH}/docker-compose.yml /tmp/docker-compose67asdf32.yml
-      - rssh docker stack deploy ${APP_NAME} -c /tmp/docker-compose67asdf32.yml --with-registry-auth
+    image: crun/kube
+    cluster_name: myk8s
+    template: deployment.yml
+    namespace: default
     environment:
-      - SSH_KEY=${SSH_KEY}
-      - R_HOST=${R_HOST}
-
-branches: [dev]
+      - REPLICAS=1
+      - INGRESS=hairtail.d.k.hscloud.top 
+    when:
+      branch: dev
