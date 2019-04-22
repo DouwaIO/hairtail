@@ -97,3 +97,8 @@ services:
       topic:
       ackPolicy: immediate
 ```
+
+### services
+
+- `services`和`steps`的差别是，`steps`需要触发才会执行，而`services`在`pipeline`生效后会一直启动着
+- `services`一般使用前置监听任务，比如`mq`和`http post`用于等待数据源信息
