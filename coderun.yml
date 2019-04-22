@@ -1,19 +1,20 @@
 steps:
   build:
     image: crun/docker
-    repo_name: ${APP_NAME}
-    registry_name: coderun
-    dockerfile: Dockerfile
-    context: 
-    tags: ${CI_COMMIT_BRANCH}
+    settings:
+      repo_name: hairtail
+      registry_name: coderun
+      dockerfile: Dockerfile
+      tags: ${CI_COMMIT_BRANCH}
 
   deploy:
     image: crun/kube
-    cluster_name: myk8s
-    template: deployment.yml
-    namespace: default
+    settings:
+      cluster_name: myk8s
+      template: deployment.yml
+      namespace: default
     environment:
       - REPLICAS=1
-      - INGRESS=hairtail.d.k.hscloud.top 
+      - INGRESS=hairtail.d.k.hscloud.top
     when:
       branch: dev
