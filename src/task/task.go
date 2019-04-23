@@ -1,8 +1,14 @@
 package task
 
 import (
+//	"github.com/DouwaIO/hairtail/src/pipeline"
 )
 
-type Task interface {
-	MQ(string, string, string, string, string) error
+type Pipeline interface {
+	Pipeline() error
 }
+
+type Service interface {
+	Service() error
+}
+

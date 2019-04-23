@@ -33,6 +33,8 @@ type Store interface {
 
 	GetService(string, string) (*model.Service, error)
 
+	GetServiceAllList() ([]*model.Service, error)
+
 	GetServiceList(string) ([]*model.Service, error)
 
 	CreateService(*model.Service) error

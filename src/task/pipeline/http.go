@@ -1,4 +1,4 @@
-package step
+package pipeline
 
 import (
     "net/http"

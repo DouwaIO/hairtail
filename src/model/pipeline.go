@@ -7,3 +7,10 @@ type Pipeline struct {
 	Context string `json:"context"    gorm:"type:text;column:context"`
 }
 
+
+type PostData struct {
+	Pipeline string `json:"pipeline"`
+	Service string `json:"service"`
+	Context string `json:"context"`
+}
+

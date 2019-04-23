@@ -27,6 +27,13 @@ func (db *datastore) GetService(name string, pipeline string) (*model.Service, e
 	return usr,err
 }
 
+func (db *datastore) GetServiceAllList() ([]*model.Service, error) {
+
+	data := []*model.Service{}
+	err := db.Where("type = ?", "MQ").Find(&data).Error
+	return data,err
+}
+
 func (db *datastore) GetServiceList(pipeline string) ([]*model.Service, error) {
 
 	data := []*model.Service{}

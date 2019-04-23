@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	"log"
 
 	"github.com/urfave/cli"
 
@@ -11,6 +12,9 @@ import (
 	//"github.com/DouwaIO/hairtail/src/store"
 	"github.com/DouwaIO/hairtail/src/store/datastore"
 	"github.com/DouwaIO/hairtail/src/router/middleware"
+	//task_pipeline "github.com/DouwaIO/hairtail/src/task/pipeline"
+	task_service "github.com/DouwaIO/hairtail/src/task/service"
+	"github.com/DouwaIO/hairtail/src/pipeline"
 )
 
 func main() {
@@ -62,8 +66,34 @@ func run(c *cli.Context) error {
 
 	handler := router.Load(
 		middleware.Store(c, store_),
+		//middleware.Task(c, store_),
 	)
 
+	//go func() {
+	//}()
+
+	//q := task_service.New(service, parsed.Pipeline)
+	//q.Service()
+	//services, _ := store_.GetServiceAllList()
+	service, _ := store_.GetService("testMQ", "biv8l75sq0l7g0j3ual0")
+	parsed, err := pipeline.ParseString(service.Data)
+	if err != nil {
+		return nil
+	}
+
+	if len(parsed.Services) > 0 {
+		for _, service2 := range parsed.Services {
+			if service2.Name == service.Name {
+				//log.Printf("Received a message: %s", service)
+				log.Printf("Received a message: %s", "run service")
+
+				q := task_service.New(service2, parsed.Pipeline)
+				q.Service()
+
+			}
+		}
+	}
+	//log.Printf("Received a message: %s", services)
 	// start the server without tls enabled
 	if !c.Bool("lets-encrypt") {
 		return http.ListenAndServe(

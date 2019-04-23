@@ -2,9 +2,11 @@ package server
 
 import (
 //	"github.com/DouwaIO/hairtail/src/task"
+	task_service "github.com/DouwaIO/hairtail/src/task/service"
+	task_pipeline "github.com/DouwaIO/hairtail/src/task/pipeline"
 	"net/http"
 	"github.com/gin-gonic/gin"
-	"github.com/DouwaIO/hairtail/src/task/step"
+//	"github.com/DouwaIO/hairtail/src/task/step"
 	"github.com/DouwaIO/hairtail/src/schema"
 	"github.com/DouwaIO/hairtail/src/pipeline"
 	"github.com/DouwaIO/hairtail/src/model"
@@ -93,20 +95,24 @@ func Pipeline(c *gin.Context) {
 						c.String(500, err.Error())
 						return
 					}
-					err = step.StartService(newser)
-					if err != nil {
-						c.String(500, err.Error())
-						return
-					}
+					q := task_service.New(service, parsed.Pipeline)
+					q.Service()
+					//err = task.StartService(newser)
+					//if err != nil {
+					//	c.String(500, err.Error())
+					//	return
+					//}
 				}
 			}
 		} else {
 			//step.Send_Message("amqp", "aa","aa","aa")
-			err = step.New(in.Data, []byte(in.Context))
-			if err != nil {
-				c.String(500, err.Error())
-				return
-			}
+			q := task_pipeline.New(parsed.Pipeline, []byte(in.Context))
+			q.Pipeline()
+			//err = step.New(in.Data, []byte(in.Context))
+			//if err != nil {
+			//	c.String(500, err.Error())
+			//	return
+			//}
 
 		}
 		c.JSON(200, newscd)
@@ -117,25 +123,39 @@ func Pipeline(c *gin.Context) {
 }
 
 func PostData(c *gin.Context) {
-	c.String(200, "hello world")
-	//go step.New("test")
-	//go task.FromContext(c).MQ("amqp","aa","aa","aa","aa")
-	//c.JSON(200, "test teste")
-	//user, err := store.FromContext(c).GetUser(1)
-	//if err != nil {
-	//	new_user := &model.User{
-	//		Login:  "test",
-	//		Token: "test test",
-	//	}
-	//	err = store.FromContext(c).CreateUser(new_user)
-	//	if err != nil {
-	//		c.String(500, err.Error())
-	//		return
-	//	}
-	//	c.JSON(200, new_user)
+	in := &model.PostData{}
+	err := c.Bind(in)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
 
-	//} else {
-	//	c.JSON(200, user)
-	//}
+	pipeline2, err := store.FromContext(c).GetPipeline(in.Pipeline)
+	if err != nil {
+		c.JSON(400, "pipeline find error")
+		return
+	}
+
+	service2, err := store.FromContext(c).GetService(in.Service, pipeline2.ID)
+	if err != nil {
+		c.JSON(400, "service find error")
+		return
+	}
+	if service2.Type == "API" {
+		parsed, err := pipeline.ParseString(service2.Data)
+		if err != nil {
+			c.JSON(400, "yaml error")
+			return
+		}
+
+		q := task_pipeline.New(parsed.Pipeline, []byte(in.Context))
+		q.Pipeline()
+		c.JSON(200, "OK")
+		return
+	}
+
+	c.JSON(400, "service Type error")
+
+
 }
 
