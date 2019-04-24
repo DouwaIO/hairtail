@@ -219,9 +219,11 @@ settings:
 
 ### 例子
 
+- 例子1
+
 配置
 ```yaml
-type: filter
+type: accumulate
 settings:
   map:
     - order_no=order_no
@@ -240,14 +242,49 @@ settings:
 ```
 
 表中数据
+
 |order_no|sale_full_name|qty|
 |--------|--------------|---|
 |001|张三|100|
 
 更新后
 
-表中数据
 |order_no|sale_full_name|qty|
 |--------|--------------|---|
 |001|张三|130|
+
+- 例子2
+
+配置
+```yaml
+type: accumulate
+settings:
+  map:
+    - order_no=order_no
+    - sale_name=sale_full_name
+  source: qty
+  target: qty
+  compute: +
+  ignore: false
+```
+
+输入
+```json
+[{"order_no": "001", "sale_name": "张三", "qty": 30}
+,{"order_no": "001", "sale_name": "李四", "qty": 50}
+]
+```
+
+表中数据
+
+|order_no|sale_full_name|qty|
+|--------|--------------|---|
+|001|张三|100|
+
+更新后
+
+|order_no|sale_full_name|qty|
+|--------|--------------|---|
+|001|张三|130|
+|001|李四|50|
 
