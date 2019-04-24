@@ -2,13 +2,13 @@ package server
 
 import (
 //	"github.com/DouwaIO/hairtail/src/task"
-	task_service "github.com/DouwaIO/hairtail/src/task/service"
-	task_pipeline "github.com/DouwaIO/hairtail/src/task/pipeline"
+	task_pipeline "github.com/DouwaIO/hairtail/src/pipeline"
+	task_service "github.com/DouwaIO/hairtail/src/service"
 	"net/http"
 	"github.com/gin-gonic/gin"
 //	"github.com/DouwaIO/hairtail/src/task/step"
-	"github.com/DouwaIO/hairtail/src/schema"
-	"github.com/DouwaIO/hairtail/src/pipeline"
+	"github.com/DouwaIO/hairtail/src/yaml/schema"
+	"github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	"github.com/DouwaIO/hairtail/src/model"
 	"github.com/DouwaIO/hairtail/src/store"
 	"github.com/DouwaIO/hairtail/src/utils"
@@ -95,8 +95,7 @@ func Pipeline(c *gin.Context) {
 						c.String(500, err.Error())
 						return
 					}
-					q := task_service.New(service, parsed.Pipeline)
-					q.Service()
+					task_service.Service(service, parsed.Pipeline)
 					//err = task.StartService(newser)
 					//if err != nil {
 					//	c.String(500, err.Error())
@@ -106,8 +105,7 @@ func Pipeline(c *gin.Context) {
 			}
 		} else {
 			//step.Send_Message("amqp", "aa","aa","aa")
-			q := task_pipeline.New(parsed.Pipeline, []byte(in.Context))
-			q.Pipeline()
+			task_pipeline.Pipeline(parsed.Pipeline, []byte(in.Context))
 			//err = step.New(in.Data, []byte(in.Context))
 			//if err != nil {
 			//	c.String(500, err.Error())
@@ -148,8 +146,7 @@ func PostData(c *gin.Context) {
 			return
 		}
 
-		q := task_pipeline.New(parsed.Pipeline, []byte(in.Context))
-		q.Pipeline()
+		task_pipeline.Pipeline(parsed.Pipeline, []byte(in.Context))
 		c.JSON(200, "OK")
 		return
 	}

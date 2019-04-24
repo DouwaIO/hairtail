@@ -1,56 +1,31 @@
 package pipeline
 
 import (
-	"io"
-	"io/ioutil"
-	//"os"
-
-	"gopkg.in/yaml.v2"
+	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	"github.com/DouwaIO/hairtail/src/task"
 )
 
-type (
 
-	Schema struct {
-		Version string `yaml:"version"`
-		Kind    string `yaml:"kind"`
-		Name    string `yaml:"name"`
-		Services []*Container `yaml:"services,omitempty"`
-		Pipeline []*Container `yaml:"steps"`
+
+func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) error {
+	//parsed, err := yaml_pipeline.ParseString(q.config)
+	//if err != nil {
+	//	return errors.New("yaml type error")
+	//}
+	if len(pipeline) > 0 {
+		for _, pipeline2 := range pipeline {
+			if _, ok := task.Funcs[pipeline2.Type]; ok {
+				data2 := task.CallPipeline(pipeline2, data)
+				if data2 != nil {
+					data = data2
+				}
+			} else {
+				return nil
+			}
+
+		}
 	}
-
-	Container struct {
-		Name          string                    `yaml:"name"`
-		Desc          string                    `yaml:"desc,omitempty"`
-		Type          string                    `yaml:"type"`
-		Settings      map[string]interface{}    `yaml:"settings,omitempty"`
-		Vargs         map[string]interface{}    `yaml:",inline"`
-	}
-
-)
-
-// Parse parses the configuration from bytes b.
-func Parse(r io.Reader) (*Schema, error) {
-	out, err := ioutil.ReadAll(r)
-	if err != nil {
-		return nil, err
-	}
-	return ParseBytes(out)
+	return nil
 }
 
-// ParseBytes parses the configuration from bytes b.
-func ParseBytes(b []byte) (*Schema, error) {
-	out := new(Schema)
-	err := yaml.Unmarshal(b, out)
-	if err != nil {
-		return nil, err
-	}
 
-	return out, nil
-}
-
-// ParseString parses the configuration from string s.
-func ParseString(s string) (*Schema, error) {
-	return ParseBytes(
-		[]byte(s),
-	)
-}

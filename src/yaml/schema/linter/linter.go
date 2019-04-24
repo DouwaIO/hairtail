@@ -3,7 +3,7 @@ package linter
 import (
 	"fmt"
 
-	"github.com/DouwaIO/hairtail/src/schema"
+	"github.com/DouwaIO/hairtail/src/yaml/schema"
 )
 
 // A Linter lints a pipeline configuration.

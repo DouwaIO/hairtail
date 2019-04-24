@@ -6,5 +6,6 @@ type Service struct {
 	Type string `json:"type"          gorm:"type:varchar(500);column:type"`
 	Pipeline string `json:"pipeline_id"          gorm:"type:varchar(50);column:pipeline_id"`
 	Data string `json:"data"          gorm:"type:text;column:data"`
+	Timestamp int64 `json:"timestamp"          gorm:"column:timestamp"`
 }
 
