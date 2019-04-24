@@ -3,8 +3,8 @@ package service
 import (
 	"log"
 	"github.com/streadway/amqp"
-	"github.com/DouwaIO/hairtail/src/pipeline"
-	task_pipeline "github.com/DouwaIO/hairtail/src/task/pipeline"
+	"github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	//task_pipeline "github.com/DouwaIO/hairtail/src/pipeline"
 )
 
 func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Container) error {
@@ -52,8 +52,7 @@ func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Con
 		go func() {
 		    for d := range msgs {
 		        log.Printf("Received a message: %s", d.Body)
-			q := task_pipeline.New(data, d.Body)
-			q.Pipeline()
+			//task_pipeline.Pipeline(data, d.Body)
 		    }
 		}()
 		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")

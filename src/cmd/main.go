@@ -12,9 +12,8 @@ import (
 	//"github.com/DouwaIO/hairtail/src/store"
 	"github.com/DouwaIO/hairtail/src/store/datastore"
 	"github.com/DouwaIO/hairtail/src/router/middleware"
-	//task_pipeline "github.com/DouwaIO/hairtail/src/task/pipeline"
-	task_service "github.com/DouwaIO/hairtail/src/task/service"
-	"github.com/DouwaIO/hairtail/src/pipeline"
+	task_service "github.com/DouwaIO/hairtail/src/service"
+	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 )
 
 func main() {
@@ -76,7 +75,7 @@ func run(c *cli.Context) error {
 	//q.Service()
 	//services, _ := store_.GetServiceAllList()
 	service, _ := store_.GetService("testMQ", "biv8l75sq0l7g0j3ual0")
-	parsed, err := pipeline.ParseString(service.Data)
+	parsed, err := yaml_pipeline.ParseString(service.Data)
 	if err != nil {
 		return nil
 	}
@@ -87,8 +86,7 @@ func run(c *cli.Context) error {
 				//log.Printf("Received a message: %s", service)
 				log.Printf("Received a message: %s", "run service")
 
-				q := task_service.New(service2, parsed.Pipeline)
-				q.Service()
+				task_service.Service(service2, parsed.Pipeline)
 
 			}
 		}

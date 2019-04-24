@@ -4,9 +4,6 @@ import (
 	"log"
 	"fmt"
 	"time"
-	//"github.com/streadway/amqp"
-//	"github.com/DouwaIO/hairtail/src/pipeline"
-	//task_pipeline "github.com/DouwaIO/hairtail/src/task/pipeline"
 
         _ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/jinzhu/gorm"
