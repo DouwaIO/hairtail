@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "encoding/json"
+//    "strconv"
 )
 
 
@@ -14,6 +15,7 @@ func typeof(v interface{}) string {
 func split(data map[string]interface{},output_dict map[string]interface{},key__ string) (map[string]interface{}, []interface{}){
     var output_list []interface{}
     var output_list2 []interface{}
+    var output_list3 []interface{}
     for key := range data{
         if typeof(data[key]) == "map[string]interface {}" {
 	    fmt.Println("map", data[key])
@@ -27,19 +29,61 @@ func split(data map[string]interface{},output_dict map[string]interface{},key__ 
 	    fmt.Println("list", data[key])
             for i:=0; i < len(data[key].([]interface{})); i++ {
                 dict__,_ := split(data[key].([]interface{})[i].(map[string]interface{}),make(map[string]interface{}),key__ + key + "__")
-                output_list = append(output_list, dict__)
+                //output_list = append(output_list, dict__)
+		if len(output_list2) == 0 {
+                  output_list = append(output_list, dict__)
+	        }
+
+
 	        fmt.Println("output_list2 666666666666", output_list2)
 	        fmt.Println("out list", output_list)
+	        fmt.Println("out list", dict__)
             }
-	    for _, v := range output_list {
-	        for _, v2 := range output_list2 {
-	        for k, v3 := range v2.(map[string]interface{}) {
-                           v.(map[string]interface{})[k] = v3
-	        }
-	        }
-	    }
+
+	    if len(output_list2) > 0 {
             output_list2 = data[key].([]interface{})
-        }
+	    fmt.Println("out list 2222", output_list)
+	    fmt.Println("output_list2 666666666666", output_list2)
+	    //output_list = append(output_list, output_list...)
+	    fmt.Println("out list 2222", output_list)
+	    //fmt.Println("out list 2222", )
+	    for _, v := range output_list {
+	        for k, v3 := range v.(map[string]interface{}) {
+	           for _, v2 := range output_list2 {
+	               for k2, v4 := range v2.(map[string]interface{}) {
+	                           //v.(map[string]interface{})[key__ + key ] = v4
+	                           //v3.(map[string]interface{})[k2] = v4
+                                   // v.(map[string]interface{}
+				 //output_list(
+	                           fmt.Println("cccccc")
+	                      //     fmt.Println((i * i2)+i+i2)
+	                          // fmt.Println(i2+1)
+			qq := make(map[string]interface{})
+			qq[k2] = v4
+			qq[k] = v3
+	                output_list3 = append(output_list3, qq)
+
+	                      fmt.Println("v3",v3)
+	                      fmt.Println("v4",v4)
+
+	                     fmt.Println("k",k)
+
+			           fmt.Println("k2",k2)
+			           fmt.Println(v.(map[string]interface{}))
+			    }
+			}
+		}
+	    }
+	                           fmt.Println(output_list3)
+           }
+            output_list2 = data[key].([]interface{})
+	    //output_list = append(output_list3
+	    if len(output_list3) != 0 {
+		    output_list = output_list3
+	    }
+	        fmt.Println("out list", output_list)
+   }
+
     }
     return output_dict,output_list
 }
