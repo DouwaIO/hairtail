@@ -11,7 +11,8 @@ var (
 	Funcs = map[string]interface{}{"MQ_Send": MQSend,
 				       "HTTP_Send": HTTPSend,
 				       "test": Test,
-				       "test2": Test2 }
+					   "test2": Test2,
+					   "split_data" :SplitData}
 )
 
 
@@ -45,6 +46,14 @@ func CallPipeline(pipeline2 *yaml_pipeline.Container, data []byte) []byte {
 		log.Printf("Data :", string(data))
 		return data
 	}
+	if pipeline2.Type == "split_data" {
+		result, _ := Call(Funcs, pipeline2.Type, data)
+		data = result[0].Interface().([]byte)
+		log.Printf("Data :", string(data))
+		return data
+	}
 	return nil
 }
+
+
 

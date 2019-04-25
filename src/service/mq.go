@@ -52,7 +52,7 @@ func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Con
 		go func() {
 		    for d := range msgs {
 		        log.Printf("Received a message: %s", d.Body)
-			task_pipeline.Pipeline(data, d.Body)
+				task_pipeline.Pipeline(data, d.Body)
 		    }
 		}()
 		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")

@@ -1,4 +1,4 @@
-package main
+package task
 
 import (
 	"fmt"
@@ -32,7 +32,7 @@ func split(data map[string]interface{},output_dict map[string]interface{},key__ 
     return output_dict,output_list
 }
 
-func split_data(data []byte) []byte {
+func SplitData(data []byte) []byte {
     myMap:=make(map[string]interface{})
     json.Unmarshal(data,&myMap)
     output_dict := make(map[string]interface{})
@@ -50,30 +50,4 @@ func split_data(data []byte) []byte {
     // fmt.Println(string(data2))
 
     return data2
-}
-
-
-
-
-func main() {
-
-    str := "{\"name\":\"fabric_stock_in\",\"type\":\"add\",\"key\":\"F000323546\",\"time\":\"2019-04-23T03:10:33.775Z\",\"data\":{\"bill_no\":\"string\",\"details\":[{\"grade\":\"string\",\"location_no\":\"string\",\"line\":\"ASDF111\"},{\"fabric_no\":\"string\"}],\"bill_type_name\":\"采购入库\"}}"
-    // myMap:=make(map[string]interface{})
-    // output_dict := make(map[string]interface{})
-      
-    // json.Unmarshal([]byte(str),&myMap)
-
-    // aa,bb := split(myMap,output_dict,"")
-    // fmt.Println(aa)
-    // fmt.Println("test",bb)
-    // fmt.Println(output_dict)
-
-
-
-    bb := split_data([]byte(str))
-    data, _ := json.Marshal(bb)
-    fmt.Println(string(data))
-
-    // fmt.Print(aa)
-    //fmt.Print(bb)
 }
