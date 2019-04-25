@@ -34,57 +34,32 @@ func split(data map[string]interface{},output_dict map[string]interface{},key__ 
                   output_list = append(output_list, dict__)
 	        }
 
-
-	        fmt.Println("output_list2 666666666666", output_list2)
-	        fmt.Println("out list", output_list)
-	        fmt.Println("out list", dict__)
             }
 
 	    if len(output_list2) > 0 {
             output_list2 = data[key].([]interface{})
-	    fmt.Println("out list 2222", output_list)
-	    fmt.Println("output_list2 666666666666", output_list2)
-	    //output_list = append(output_list, output_list...)
-	    fmt.Println("out list 2222", output_list)
-	    //fmt.Println("out list 2222", )
 	    for _, v := range output_list {
 	        for k, v3 := range v.(map[string]interface{}) {
 	           for _, v2 := range output_list2 {
 	               for k2, v4 := range v2.(map[string]interface{}) {
-	                           //v.(map[string]interface{})[key__ + key ] = v4
-	                           //v3.(map[string]interface{})[k2] = v4
-                                   // v.(map[string]interface{}
-				 //output_list(
-	                           fmt.Println("cccccc")
-	                      //     fmt.Println((i * i2)+i+i2)
-	                          // fmt.Println(i2+1)
-			qq := make(map[string]interface{})
-			qq[k2] = v4
-			qq[k] = v3
-	                output_list3 = append(output_list3, qq)
-
-	                      fmt.Println("v3",v3)
-	                      fmt.Println("v4",v4)
-
-	                     fmt.Println("k",k)
-
-			           fmt.Println("k2",k2)
-			           fmt.Println(v.(map[string]interface{}))
+			    qq := make(map[string]interface{})
+			    qq[k2] = v4
+			    qq[k] = v3
+	                    output_list3 = append(output_list3, qq)
 			    }
 			}
-		}
-	    }
-	                           fmt.Println(output_list3)
-           }
+		   }
+	        }
+             }
             output_list2 = data[key].([]interface{})
-	    //output_list = append(output_list3
 	    if len(output_list3) != 0 {
 		    output_list = output_list3
 	    }
-	        fmt.Println("out list", output_list)
-   }
+       }
 
     }
+
+    fmt.Println(len(output_list))
     return output_dict,output_list
 }
 
@@ -103,7 +78,6 @@ func split_data(data []byte) []byte {
     }
 
     data2, _ := json.Marshal(list_data)
-    // fmt.Println(string(data2))
 
     return data2
 }
@@ -113,24 +87,11 @@ func split_data(data []byte) []byte {
 
 func main() {
 
-    //str := "{\"name\":\"fabric_stock_in\",\"type\":\"add\",\"key\":\"F000323546\",\"time\":\"2019-04-23T03:10:33.775Z\",\"data\":{\"bill_no\":\"string\",\"details\":[{\"grade\":\"string\",\"location_no\":\"string\",\"line\":\"ASDF111\"},{\"fabric_no\":\"string\"}],\"bill_type_name\":\"采购入库\"}}"
-    str := "{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}],\"customers\":[{\"name\":\"安踏\"},{\"name\":\"李宁\"}]}}"
-    // myMap:=make(map[string]interface{})
-    // output_dict := make(map[string]interface{})
-    // json.Unmarshal([]byte(str),&myMap)
-
-    // aa,bb := split(myMap,output_dict,"")
-    // fmt.Println(aa)
-    // fmt.Println("test",bb)
-    // fmt.Println(output_dict)
+    str := "{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}],\"customers\":[{\"name\":\"安踏\"},{\"name\":\"李宁\"}]},\"customers2\":[{\"name2\":\"安踏2\"},{\"name2\":\"李宁2\"}]}"
+    //str := "{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}],\"customers\":[{\"name\":\"安踏\"},{\"name\":\"李宁\"}],\"customers2\":[{\"name2\":\"安踏2\"},{\"name2\":\"李宁2\"}]}}"
 
 
 
     bb := split_data([]byte(str))
     fmt.Println(string(bb))
-    //data, _ := json.Marshal(bb)
-    //fmt.Println(string(data))
-
-    // fmt.Print(aa)
-    //fmt.Print(bb)
 }
