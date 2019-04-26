@@ -95,7 +95,7 @@ func Pipeline(c *gin.Context) {
 						c.String(500, err.Error())
 						return
 					}
-					task_service.Service(service, parsed.Pipeline)
+					task_service.Service(service, parsed.Pipeline, newser.ID, store.FromContext(c))
 					//err = task.StartService(newser)
 					//if err != nil {
 					//	c.String(500, err.Error())

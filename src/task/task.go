@@ -2,6 +2,8 @@ package task
 
 import (
 	"log"
+//	"fmt"
+//	"context"
 	"reflect"
 	"errors"
 	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
@@ -31,6 +33,28 @@ func Call(m map[string]interface{}, name string, params ... interface{}) (result
 }
 
 func CallPipeline(pipeline2 *yaml_pipeline.Container, data []byte) []byte {
+	//s := New()
+	//ctx := context.Background()
+	//fmt.Println("s", s)
+	//log.Printf("start: %s\n", s.Info(ctx))
+	//task := &Task{
+	//	ID: "1",
+	//	Data: []byte("aaa"),
+	//}
+	//s.Push(ctx, task)
+	//log.Printf("push: %s\n", s.Info(ctx))
+	//  fn, err := createFilterFunc("filter")
+	//  if err != nil {
+	//     fmt.Println("s", err)
+	//  }
+	//s.Poll(ctx, fn, "abc2")
+	//log.Printf("poll: %s\n", s.Info(ctx))
+	//res := s.Extend(ctx, "abc")
+	//log.Printf("extend err: %s\n", res)
+	//log.Printf("extend: %s\n", s.Info(ctx))
+	//s.Done(ctx, "abc")
+	//log.Printf("done: %s\n", s.Info(ctx))
+
 	if pipeline2.Type == "MQ_Send" {
 		Call(Funcs, pipeline2.Type, pipeline2.Settings["protocol"], pipeline2.Settings["host"], pipeline2.Settings["user"], pipeline2.Settings["pwd"], pipeline2.Settings["topic"], data)
 	}

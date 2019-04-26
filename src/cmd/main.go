@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	//"log"
 
 	"github.com/urfave/cli"
 
@@ -12,8 +11,9 @@ import (
 	//"github.com/DouwaIO/hairtail/src/store"
 	"github.com/DouwaIO/hairtail/src/store/datastore"
 	"github.com/DouwaIO/hairtail/src/router/middleware"
-	//task_service "github.com/DouwaIO/hairtail/src/service"
-	//cyaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	"log"
+	task_service "github.com/DouwaIO/hairtail/src/service"
+	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 )
 
 func main() {
@@ -68,31 +68,28 @@ func run(c *cli.Context) error {
 		//middleware.Task(c, store_),
 	)
 
-	//go func() {
-	//}()
+	//启动数据库里面的service
+	services, _ := store_.GetServiceAllList()
+	log.Printf("Received a message: %s", services)
+	for _, service := range services {
+		parsed, err := yaml_pipeline.ParseString(service.Data)
+		if err != nil {
+		       return nil
+		}
 
-	//q := task_service.New(service, parsed.Pipeline)
-	//q.Service()
-	//services, _ := store_.GetServiceAllList()
-	// service, _ := store_.GetService("testMQ", "biv8l75sq0l7g0j3ual0")
-	// parsed, err := yaml_pipeline.ParseString(service.Data)
-	// if err != nil {
-	// 	return nil
-	// }
+		if len(parsed.Services) > 0 {
+		       for _, service2 := range parsed.Services {
+			if service2.Name == service.Name && service2.Type == "MQ" {
+				//log.Printf("Received a message: %s", service)
+				log.Printf("run service:", service.Name)
 
-	// if len(parsed.Services) > 0 {
-	// 	for _, service2 := range parsed.Services {
-	// 		if service2.Name == service.Name {
-	// 			//log.Printf("Received a message: %s", service)
-	// 			log.Printf("Received a message: %s", "run service")
+				task_service.Service(service2, parsed.Pipeline, service.ID, store_)
 
-	// 			task_service.Service(service2, parsed.Pipeline)
+			}
+		       }
+		}
+	}
 
-	// 		}
-	// 	}
-	// }
-	//log.Printf("Received a message: %s", services)
-	// start the server without tls enabled
 	if !c.Bool("lets-encrypt") {
 		return http.ListenAndServe(
 			c.String("server-addr"),

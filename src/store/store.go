@@ -7,7 +7,7 @@ import (
 )
 
 type Store interface {
-	GetData(string, string) (*model.Data, error)
+	GetDataList(string) ([]*model.Data, error)
 
 	CreateData(*model.Data) error
 

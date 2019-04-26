@@ -21,10 +21,10 @@ import (
 	// "errors"
 )
 
-func (db *datastore) GetData(name string, data_type string) (*model.Data, error) {
-	var usr = new(model.Data)
-	err := db.Where("name = ? and type = ?", name, data_type).First(&usr).Error
-	return usr,err
+func (db *datastore) GetDataList(service string) ([]*model.Data, error) {
+	data := []*model.Data{}
+	err := db.Where("service_id = ?", service).First(&data).Error
+	return data,err
 }
 
 func (db *datastore) CreateData(data *model.Data) error {

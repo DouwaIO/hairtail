@@ -5,9 +5,20 @@ import (
 	"github.com/streadway/amqp"
 	"github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	task_pipeline "github.com/DouwaIO/hairtail/src/pipeline"
+	"github.com/DouwaIO/hairtail/src/store"
+	"github.com/DouwaIO/hairtail/src/utils"
+	"github.com/DouwaIO/hairtail/src/model"
 )
 
-func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Container) error {
+func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Container, service string,v store.Store) error {
+	datas, err := v.GetDataList(service)
+	if err != nil {
+		log.Printf("no cache data")
+	}
+	for _, d := range datas {
+		task_pipeline.Pipeline(data, []byte(d.Data))
+		v.DeleteData(d)
+	}
 	if protocol == "amqp" {
 		mq_connct := protocol+"://"+user+":"+pwd+"@"+host+"/"
 		conn, err := amqp.Dial(mq_connct)
@@ -52,7 +63,18 @@ func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Con
 		go func() {
 		    for d := range msgs {
 		        log.Printf("Received a message: %s", d.Body)
-				task_pipeline.Pipeline(data, d.Body)
+			gen_id := utils.GeneratorId()
+			newdata := &model.Data{
+				ID: gen_id,
+				Service: service,
+				Data: string(d.Body),
+			}
+			err = v.CreateData(newdata)
+			if err != nil {
+				log.Printf("add data error")
+			}
+			task_pipeline.Pipeline(data, d.Body)
+			v.DeleteData(newdata)
 		    }
 		}()
 		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
