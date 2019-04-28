@@ -18,7 +18,10 @@ var (
 				       "HTTP_Send": HTTPSend,
 				       "test": Test,
 					   "test2": Test2,
-					   "split_data" :SplitData}
+					   "split_data": SplitData,
+					   "select_data": SelectData,
+					   "filter":Filter,
+					   "accumulate":Accumulate}
 )
 
 
