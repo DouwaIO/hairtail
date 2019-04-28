@@ -4,7 +4,8 @@ import (
 	"context"
 
 	"github.com/Sirupsen/logrus"
-	"gitlab.com/douwa/registry/dougo/src/dougo/core/queue"
+	//"gitlab.com/douwa/registry/dougo/src/dougo/core/queue"
+	"github.com/DouwaIO/hairtail/src/task/queue"
 )
 
 // Task defines scheduled pipeline Task.
@@ -26,11 +27,9 @@ type TaskStore interface {
 func WithTaskStore(q queue.Queue, s TaskStore) queue.Queue {
 	tasks, _ := s.TaskList()
 	for _, task := range tasks {
-		logrus.Debugf("task.Labelsqweqwe %v", task.ID)
-		logrus.Debugf("task.Labelsqweqwe %v", task.Data)
 		q.Push(context.Background(), &queue.Task{
 			ID:     task.ID,
-			Data:   []byte(task.Data),
+			Data:   task.Data,
 		})
 	}
 	return &persistentQueue{q, s}

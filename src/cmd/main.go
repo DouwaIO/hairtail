@@ -14,6 +14,9 @@ import (
 	"log"
 	task_service "github.com/DouwaIO/hairtail/src/service"
 	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	"github.com/DouwaIO/hairtail/src/task"
+	"github.com/DouwaIO/hairtail/src/model"
+	"github.com/DouwaIO/hairtail/src/task/queue"
 )
 
 func main() {
@@ -62,6 +65,7 @@ func run(c *cli.Context) error {
 	store_ := datastore.New(
 		c.String("db-url"),
 	)
+	task.Queue = model.WithTaskStore(queue.New(), store_)
 
 	handler := router.Load(
 		middleware.Store(c, store_),
