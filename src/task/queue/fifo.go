@@ -227,6 +227,7 @@ loop:
 	for e := q.pending.Front(); e != nil; e = next {
 		next = e.Next()
 		item := e.Value.(*Task)
+		//break loop
 		//log.Printf("project: %s", item.Labels["project"])
 		//if item.Labels["public"] == "true"  {
 		//	break loop

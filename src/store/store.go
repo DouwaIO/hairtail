@@ -52,7 +52,9 @@ type Store interface {
 	DeleteBuild(*model.Build) error
 
 	TaskList() ([]*model.Task, error)
+
 	TaskInsert(*model.Task) error
+
 	TaskDelete(string) error
 
 }
