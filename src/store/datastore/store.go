@@ -81,6 +81,9 @@ func setupDatabase(db *gorm.DB) error {
 	return db.AutoMigrate(&model.Schema{},
 			      &model.Service{},
 			      &model.Pipeline{},
+			      &model.Build{},
+			      &model.LogData{},
+			      &model.Proc{},
 			      &model.Data{}).Error
 }
 

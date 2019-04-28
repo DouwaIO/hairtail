@@ -18,28 +18,22 @@ import (
 	"github.com/DouwaIO/hairtail/src/model"
 )
 
-func (db *datastore) GetDataList(service string) ([]*model.Data, error) {
-	data := []*model.Data{}
-	err := db.Where("service_id = ?", service).First(&data).Error
-	return data,err
+func (db *datastore) LogFind(proc *model.Proc) (string, error) {
+	data := new(model.LogData)
+	err := db.Where("log_job_id = ?",proc.ID).First(&data).Error
+	return data.Data, err
+	//buf := bytes.NewBuffer(data.Data)
+	//return ioutil.NopCloser(buf), err
 }
 
-func (db *datastore) CreateData(data *model.Data) error {
-	err := db.Create(data).Error
-	return err
-}
-
-func (db *datastore) UpdateData(data *model.Data) error {
-	var count int
-	err := db.Model(&model.Data{}).Where("data_id = ?",data.ID).Count(&count).Error
-	if err != nil || count == 0{
-		return nil
+func (db *datastore) LogSave(proc *model.Proc, message string) error {
+	data := new(model.LogData)
+	err := db.Where("log_job_id = ?",proc.ID).First(&data).Error
+	if err != nil {
+		data = &model.LogData{ProcID: proc.ID}
 	}
-
-	return db.Save(data).Error
-}
-
-func (db *datastore) DeleteData(data *model.Data) error {
-	err := db.Where("data_id = ?",data.ID).Delete(model.Data{}).Error
+	data.Data = message
+	err = db.Save(data).Error
 	return err
+
 }

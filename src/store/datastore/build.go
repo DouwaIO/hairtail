@@ -27,9 +27,9 @@ import (
 //	return usr,err
 //}
 
-func (db *datastore) GetBuildList(pipeline string) ([]*model.Build, error) {
+func (db *datastore) GetBuildList(service string) ([]*model.Build, error) {
 	data := []*model.Build{}
-	err := db.Where("pipeline_id = ?", pipeline).Find(&data).Error
+	err := db.Where("service_id = ?", service).Find(&data).Error
 	return data,err
 }
 
