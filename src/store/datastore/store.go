@@ -84,6 +84,6 @@ func setupDatabase(db *gorm.DB) error {
 			      &model.Build{},
 			      &model.LogData{},
 			      &model.Proc{},
-			      &model.Data{}).Error
+			      &model.Task{}).Error
 }
 
