@@ -11,7 +11,7 @@ import (
 )
 
 
-func filter(data []byte, setting map[string]interface{}) ([]map[string]interface{},[]map[string]interface{},error){
+func filter(data []byte, setting map[string]interface{}) ([]byte,[]byte,error){
 	var list_data []map[string]interface{}
 	err := json.Unmarshal(data,&list_data)
 	if err != nil{
@@ -74,8 +74,10 @@ func filter(data []byte, setting map[string]interface{}) ([]map[string]interface
 		
 	}
 
+	res_matching_byte,_ := json.Marshal(res_matching_list)
+	res_mismatching_byte,_ := json.Marshal(res_mismatching_list)
 
-	return res_matching_list,res_mismatching_list,nil
+	return res_matching_byte,res_mismatching_byte,nil
 	// // return nil
 }
 

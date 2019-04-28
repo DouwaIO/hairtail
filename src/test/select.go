@@ -12,7 +12,7 @@ import (
 
 
 
-func select_data(data []byte, setting map[string]interface{}) ([]map[string]interface{},error){
+func select_data(data []byte, setting map[string]interface{}) ([]byte,error){
 	var list_data []map[string]interface{}
 	err := json.Unmarshal(data,&list_data)
 	if err != nil{
@@ -65,7 +65,8 @@ func select_data(data []byte, setting map[string]interface{}) ([]map[string]inte
 		}
 	}
 	
-	return res_list,nil
+	res_byte,_ := json.Marshal(res_list)
+	return res_byte,nil
 	// return nil
 }
 
