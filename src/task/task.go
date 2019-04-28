@@ -2,10 +2,16 @@ package task
 
 import (
 	"log"
+	"fmt"
+	"context"
 	"reflect"
 	"errors"
 	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	"github.com/DouwaIO/hairtail/src/task/queue"
+	"github.com/DouwaIO/hairtail/src/utils"
 )
+
+var Queue queue.Queue
 
 var (
 	Funcs = map[string]interface{}{"MQ_Send": MQSend,
@@ -31,6 +37,25 @@ func Call(m map[string]interface{}, name string, params ... interface{}) (result
 }
 
 func CallPipeline(pipeline2 *yaml_pipeline.Container, data []byte) []byte {
+	//s := queue.New()
+	ctx := context.Background()
+	fmt.Println("s", Queue)
+	log.Printf("start: %s\n", Queue.Info(ctx))
+	gen_id := utils.GeneratorId()
+	task := &queue.Task{
+		ID: gen_id,
+		Data: data,
+	}
+	Queue.Push(ctx, task)
+
+	log.Printf("push: %s\n", Queue.Info(ctx))
+
+	//res := Queue.Extend(ctx, "abc")
+	//log.Printf("extend err: %s\n", res)
+	//log.Printf("extend: %s\n", Queue.Info(ctx))
+	//Queue.Done(ctx, "abc")
+	//log.Printf("done: %s\n", Queue.Info(ctx))
+
 	if pipeline2.Type == "MQ_Send" {
 		Call(Funcs, pipeline2.Type, pipeline2.Settings["protocol"], pipeline2.Settings["host"], pipeline2.Settings["user"], pipeline2.Settings["pwd"], pipeline2.Settings["topic"], data)
 	}
@@ -52,6 +77,14 @@ func CallPipeline(pipeline2 *yaml_pipeline.Container, data []byte) []byte {
 		log.Printf("Data :", string(data))
 		return data
 	}
+
+	fn, err := queue.CreateFilterFunc("filter")
+	if err != nil {
+	   fmt.Println("s", err)
+	}
+	Queue.Poll(ctx, fn, gen_id)
+	log.Printf("poll: %s\n", Queue.Info(ctx))
+
 	return nil
 }
 
