@@ -7,14 +7,6 @@ import (
 )
 
 type Store interface {
-	GetDataList(string) ([]*model.Data, error)
-
-	CreateData(*model.Data) error
-
-	UpdateData(*model.Data) error
-
-	DeleteData(*model.Data) error
-
 	GetPipeline(string) (*model.Pipeline, error)
 
 	CreatePipeline(*model.Pipeline) error
@@ -58,5 +50,11 @@ type Store interface {
 	UpdateBuild(*model.Build) error
 
 	DeleteBuild(*model.Build) error
+
+	TaskList() ([]*model.Task, error)
+
+	TaskInsert(*model.Task) error
+
+	TaskDelete(string) error
 
 }
