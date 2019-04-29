@@ -4,11 +4,11 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/Sirupsen/logrus"
-	"github.com/gin-gonic/gin"
-	"github.com/DouwaIO/hairtail/src/server"
 	"github.com/DouwaIO/hairtail/src/router/middleware/ginrus"
 	"github.com/DouwaIO/hairtail/src/router/middleware/header"
+	"github.com/DouwaIO/hairtail/src/server"
+	"github.com/Sirupsen/logrus"
+	"github.com/gin-gonic/gin"
 )
 
 // Load loads the router
@@ -27,6 +27,9 @@ func Load(middleware ...gin.HandlerFunc) http.Handler {
 	e.POST("/api/schema", server.Schema)
 	e.POST("/api/pipeline", server.Pipeline)
 	e.POST("/api/data", server.PostData)
+
+	e.POST("/api/pipeline/:pipeline_id/active", server.PipelineActive)
+	e.POST("/api/pipeline/:pipeline_id/hook", server.PipelineHook)
 
 	return e
 }

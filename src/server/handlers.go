@@ -1,17 +1,17 @@
 package server
 
 import (
-//	"github.com/DouwaIO/hairtail/src/task"
+	//	"github.com/DouwaIO/hairtail/src/task"
 	task_pipeline "github.com/DouwaIO/hairtail/src/pipeline"
 	task_service "github.com/DouwaIO/hairtail/src/service"
-	"net/http"
 	"github.com/gin-gonic/gin"
-//	"github.com/DouwaIO/hairtail/src/task/step"
-	"github.com/DouwaIO/hairtail/src/yaml/schema"
-	"github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	"net/http"
+	//	"github.com/DouwaIO/hairtail/src/task/step"
 	"github.com/DouwaIO/hairtail/src/model"
 	"github.com/DouwaIO/hairtail/src/store"
 	"github.com/DouwaIO/hairtail/src/utils"
+	"github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	"github.com/DouwaIO/hairtail/src/yaml/schema"
 )
 
 func Schema(c *gin.Context) {
@@ -34,8 +34,8 @@ func Schema(c *gin.Context) {
 
 		gen_id := utils.GeneratorId()
 		newscd := &model.Schema{
-			ID: gen_id,
-			Name:  parsed.Name,
+			ID:   gen_id,
+			Name: parsed.Name,
 			Data: in.Data,
 		}
 		err = store.FromContext(c).CreateSchema(newscd)
@@ -69,8 +69,8 @@ func Pipeline(c *gin.Context) {
 	if err != nil {
 		gen_id := utils.GeneratorId()
 		newscd := &model.Pipeline{
-			ID: gen_id,
-			Name:  parsed.Name,
+			ID:   gen_id,
+			Name: parsed.Name,
 			Data: in.Data,
 		}
 		err = store.FromContext(c).CreatePipeline(newscd)
@@ -84,11 +84,11 @@ func Pipeline(c *gin.Context) {
 				if err != nil {
 					gen_id := utils.GeneratorId()
 					newser := &model.Service{
-						ID: gen_id,
-						Name: service.Name,
-						Type: service.Type,
+						ID:       gen_id,
+						Name:     service.Name,
+						Type:     service.Type,
 						Pipeline: newscd.ID,
-						Data: in.Data,
+						Data:     in.Data,
 					}
 					err = store.FromContext(c).CreateService(newser)
 					if err != nil {
@@ -153,6 +153,14 @@ func PostData(c *gin.Context) {
 
 	c.JSON(400, "service Type error")
 
-
 }
 
+func PipelineActive(c *gin.Context) {
+	pipelineID := c.Param("pipeline_id")
+	c.JSON(200, "")
+}
+
+func PipelineHook(c *gin.Context) {
+	pipelineID := c.Param("pipeline_id")
+	c.JSON(200, "")
+}
