@@ -49,9 +49,12 @@ func select_data(data []byte, setting map[string]interface{}) ([]byte,error){
 				delete(list_data[i],exclude.([]interface{})[j].(string))
 			}
 			res_list = append(res_list,list_data[i])
+		}else{
+			res_list = list_data
 		}
 	}
 
+	fmt.Println(res_list)
 
 
 	// 进行重命名
@@ -73,7 +76,7 @@ func select_data(data []byte, setting map[string]interface{}) ([]byte,error){
 
 
 func main() {
-	setting := "{\"include\":[\"a\",\"b\"],\"rename\":[\"b=bbbbb\",\"data__sales__name=sale_name\"]}"
+	setting := "{\"rename\":[\"b=bbbbb\",\"data__sales__name=sale_name\"]}"
 	mySetting:=make(map[string]interface{})
     json.Unmarshal([]byte(setting),&mySetting)
 
