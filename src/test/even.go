@@ -63,8 +63,12 @@ func mergeObj(listA []interface{}, obj map[string]interface{}) []interface{} {
 }
 
 func even(rows []interface{}, level int,separator string) ([]interface{}){
-    level++
+    
     var rstList []interface{}
+    if level == 0{
+        return rstList
+    }
+    level-- 
     // 遍历所有行
     for _, r := range rows {
         rstObj := make(map[string]interface{})
@@ -110,11 +114,10 @@ func even(rows []interface{}, level int,separator string) ([]interface{}){
     return rstList
 }
 
-func split_data(data []byte,separator string) []byte {
+func split_data(data []byte, level int,separator string) []byte {
     var myList []interface{}
     json.Unmarshal(data, &myList)
 
-    level := 0
     evenList := even(myList, level, separator)
 
     // for i:=0; i < len(list_data); i++ {
@@ -137,7 +140,7 @@ func main() {
     // str := "[{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}],\"customers\":[{\"name\":\"安踏\"},{\"name\":\"李宁\"},{\"name\":\"特步\"}]}}]"
 
     fmt.Printf("data: %s\n\n", str)
-    bb := split_data([]byte(str),".")
+    bb := split_data([]byte(str),1,".")
     fmt.Printf("\nresult: \n%s\n", string(bb))
 }
 
