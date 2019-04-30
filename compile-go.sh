@@ -22,6 +22,6 @@ CGO_ENABLED=0 GOOS=linux GOARCH=amd64
 
 echo "compile server starting"
 cd $SRCPATH/cmd
-go build -o $SRCPATH/dist/hairtail
+go build -o $APPPATH/dist/hairtail
 echo "compile server ending"
 echo

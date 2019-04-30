@@ -45,8 +45,6 @@
 1. 参数
   - dept: 解析深度，默认5，对JSON的数据层级别进行平整解析的最大深度
   - char: 字段分离符号，默认`__`，用于分割解析后上下级key名称，如上例中：`data__sales`
-  - exclude: 排除需要进行解析的key
-  - include：包含要解析的key
 
 ### 例子
 
@@ -54,36 +52,23 @@
 
 配置
 ```yaml
-type: event
+type: even
 settings:
   dept: 5
   char: __
-  include: ['data.sales', 'data.order_no']
 ```
 
 输入
 ```json
-{"datetime": "2019-04-03 10:22:20",
-"data": {
-  "order_no": "001",
-  "sales": [{
-    "name": "张三"
-  }, {
-    "name": "李四"
-  }],
-  "customers": [{
-    "name": "安踏"
-  }, {
-    "name": "李宁"
-  }]
-}
-}
+{"data": {"order_no": "001"
+,"sales": [{"name": "张三"}, {"name": "李四"}]
+}}
 ```
 
 输出
 ```json
-[{"data__order_no": "001", "data__sales__name": "张三"}
-,{"data__order_no": "001", "data__sales__name": "李四"}
+[{"order_no": "001", "sales__name": "张三"}
+,{"order_no": "001", "sales__name": "李四"}
 ]
 ```
 
@@ -91,7 +76,7 @@ settings:
 
 配置
 ```yaml
-type: event
+type: even
 settings:
   dept: 5
   char: __
