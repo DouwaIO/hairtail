@@ -11,7 +11,7 @@ func typeof(v interface{}) string {
     return fmt.Sprintf("%T", v)
 }
 
-func mergeList(listA []interface{}, key string, listB []interface{}) []interface{} {
+func mergeList(listA []interface{}, key string, listB []interface{}, separator string) []interface{} {
     fmt.Printf("merge list: %s = %+v and %+v\n", key, listA, listB)
     var newList []interface{}
     if len(listB) > 0 {
@@ -23,7 +23,7 @@ func mergeList(listA []interface{}, key string, listB []interface{}) []interface
                 }
                 for cRK, cRV := range cR.(map[string]interface{}) {
                     if key != "" {
-                      dict[fmt.Sprintf("%s__%s", key, cRK)] = cRV
+                      dict[fmt.Sprintf("%s%s%s", key, separator ,cRK)] = cRV
                     } else {
                       dict[cRK] = cRV
                     }
@@ -37,7 +37,7 @@ func mergeList(listA []interface{}, key string, listB []interface{}) []interface
             // fmt.Printf("%+v\n", typeof(cR))
             for cRK, cRV := range cR.(map[string]interface{}) {
                 if key != "" {
-                  dict[fmt.Sprintf("%s__%s", key, cRK)] = cRV
+                  dict[fmt.Sprintf("%s%s%s", key, separator, cRK)] = cRV
                 } else {
                   dict[cRK] = cRV
                 }
@@ -62,7 +62,7 @@ func mergeObj(listA []interface{}, obj map[string]interface{}) []interface{} {
     return listA
 }
 
-func even(rows []interface{}, level int) ([]interface{}){
+func even(rows []interface{}, level int,separator string) ([]interface{}){
     level++
     var rstList []interface{}
     // 遍历所有行
@@ -75,11 +75,11 @@ func even(rows []interface{}, level int) ([]interface{}){
             if typeof(v) == "map[string]interface {}" {
                 var list []interface{}
                 list = append(list, v.(map[string]interface{}))
-                rstObj[k] = even(list, level)
+                rstObj[k] = even(list, level, separator)
                 fmt.Printf("level: %d, dict: %+v\n", level, rstObj[k])
             // 如果是列表
             } else if typeof(v) == "[]interface {}" {
-                rstObj[k] = even(v.([]interface{}), level)
+                rstObj[k] = even(v.([]interface{}), level, separator)
                 fmt.Printf("level: %d, list: %+v\n", level, rstObj[k])
             // 如果是常量
             } else {
@@ -93,7 +93,7 @@ func even(rows []interface{}, level int) ([]interface{}){
         var rowList []interface{}
         for k, v := range rstObj {
             if typeof(v) == "[]interface {}" {
-                rowList = mergeList(v.([]interface{}), k, rowList)
+                rowList = mergeList(v.([]interface{}), k, rowList,separator)
                 delete(rstObj, k)
             }
         }
@@ -110,12 +110,12 @@ func even(rows []interface{}, level int) ([]interface{}){
     return rstList
 }
 
-func split_data(data []byte) []byte {
+func split_data(data []byte,separator string) []byte {
     var myList []interface{}
     json.Unmarshal(data, &myList)
 
     level := 0
-    evenList := even(myList, level)
+    evenList := even(myList, level, separator)
 
     // for i:=0; i < len(list_data); i++ {
     //     for k ,v := range dict_data { list_data[i].(map[string]interface{})[k] = v }
@@ -131,12 +131,19 @@ func split_data(data []byte) []byte {
 func main() {
 
     // str := "[{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}]}}]"
-    // str := "[{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}]},\"data1\":{\"order_no\":\"001\",\"customers\":[{\"name\":\"安踏\"},{\"name\":\"李宁\"}]}}]"
+    str := "[{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}]},\"data1\":{\"order_no\":\"001\",\"customers\":[{\"name\":\"安踏\"},{\"name\":\"李宁\"}]}}]"
     // str := "[{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}],\"customers\":[{\"name\":\"安踏\"},{\"name\":\"李宁\"}]}}]"
     // str := "[{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}],\"customers\":[{\"name\":\"安踏\"},{\"name\":\"李宁\"},{\"name\":\"特步\"}]}}]"
     // str := "[{\"datetime\":\"2019-04-03 10:22:20\",\"data\":{\"order_no\":\"001\",\"sales\":[{\"name\":\"张三\"},{\"name\":\"李四\"}],\"customers\":[{\"name\":\"安踏\"},{\"name\":\"李宁\"},{\"name\":\"特步\"}]}}]"
 
     fmt.Printf("data: %s\n\n", str)
-    bb := split_data([]byte(str))
+    bb := split_data([]byte(str),".")
     fmt.Printf("\nresult: \n%s\n", string(bb))
 }
+
+
+
+
+
+
+
