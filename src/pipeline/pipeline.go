@@ -1,10 +1,16 @@
 package pipeline
 
 import (
+	"context"
+	"log"
+	"fmt"
 	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	"github.com/DouwaIO/hairtail/src/task"
+	"github.com/DouwaIO/hairtail/src/pipeline/queue"
+	"github.com/DouwaIO/hairtail/src/utils"
 )
 
+var Queue queue.Queue
 
 
 func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) error {
@@ -12,6 +18,20 @@ func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) error {
 	//if err != nil {
 	//	return errors.New("yaml type error")
 	//}
+        ctx := context.Background()
+        gen_id := utils.GeneratorId()
+        task2 := &queue.Task{
+	         ID: gen_id,
+	         Data: data,
+        }
+        Queue.Push(ctx, task2)
+        fn, err := queue.CreateFilterFunc("filter")
+        if err != nil {
+           fmt.Println("s", err)
+        }
+	Queue.Poll(ctx, fn, gen_id)
+	log.Printf("poll: %s\n", Queue.Info(ctx))
+
 	if len(pipeline) > 0 {
 		for _, pipeline2 := range pipeline {
 			if _, ok := task.Funcs[pipeline2.Type]; ok {
@@ -25,6 +45,8 @@ func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) error {
 
 		}
 	}
+	Queue.Done(ctx, gen_id)
+	log.Printf("done: %s\n", Queue.Info(ctx))
 	return nil
 }
 

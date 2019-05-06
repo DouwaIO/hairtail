@@ -5,7 +5,7 @@ import (
 
 	"github.com/Sirupsen/logrus"
 	//"gitlab.com/douwa/registry/dougo/src/dougo/core/queue"
-	"github.com/DouwaIO/hairtail/src/task/queue"
+	"github.com/DouwaIO/hairtail/src/pipeline/queue"
 )
 
 // Task defines scheduled pipeline Task.

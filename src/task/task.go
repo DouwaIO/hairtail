@@ -7,11 +7,8 @@ import (
 	"reflect"
 	"errors"
 	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
-	"github.com/DouwaIO/hairtail/src/task/queue"
 	//"github.com/DouwaIO/hairtail/src/utils"
 )
-
-var Queue queue.Queue
 
 var (
 	Funcs = map[string]interface{}{"MQ_Send": MQSend,

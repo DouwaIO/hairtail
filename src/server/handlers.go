@@ -156,11 +156,16 @@ func PostData(c *gin.Context) {
 }
 
 func PipelineActive(c *gin.Context) {
-	pipelineID := c.Param("pipeline_id")
+	//pipelineID := c.Param("pipeline_id")
 	c.JSON(200, "")
 }
 
 func PipelineHook(c *gin.Context) {
-	pipelineID := c.Param("pipeline_id")
+	//pipelineID := c.Param("pipeline_id")
 	c.JSON(200, "")
+}
+
+func Info(c *gin.Context) {
+	//pipelineID := c.Param("pipeline_id")
+	c.JSON(200, task_pipeline.Queue.Info(c))
 }
