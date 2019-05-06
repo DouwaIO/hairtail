@@ -2,12 +2,13 @@ package service
 
 import (
 	"log"
+	"time"
 	"github.com/streadway/amqp"
 	"github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	task_pipeline "github.com/DouwaIO/hairtail/src/pipeline"
 	"github.com/DouwaIO/hairtail/src/store"
-	//"github.com/DouwaIO/hairtail/src/utils"
-	//"github.com/DouwaIO/hairtail/src/model"
+	"github.com/DouwaIO/hairtail/src/utils"
+	"github.com/DouwaIO/hairtail/src/model"
 )
 
 func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Container, service string,v store.Store) error {
@@ -73,9 +74,31 @@ func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Con
 			//if err != nil {
 			//	log.Printf("add data error")
 			//}
-			task_pipeline.Pipeline(data, d.Body)
 			//v.DeleteData(newdata)
-		    }
+			currentTime := time.Now().Unix()
+			gen_id := utils.GeneratorId()
+			newdata := &model.Build{
+				ID: gen_id,
+				Service: service,
+				Data: string(d.Body),
+				//Status: model.StatusPending,
+				Status: model.StatusRunning,
+				Timestamp: currentTime,
+				Timestamp2: int64(0),
+			}
+			err = v.CreateBuild(newdata)
+			if err != nil {
+				log.Printf("add data error")
+			}
+			status := task_pipeline.Pipeline(data, d.Body)
+			currentTime = time.Now().Unix()
+			newdata.Status = status
+			newdata.Timestamp2 = currentTime
+			err = v.UpdateBuild(newdata)
+			if err != nil {
+				log.Printf("add data error")
+			}
+		   }
 		}()
 		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 		<-forever

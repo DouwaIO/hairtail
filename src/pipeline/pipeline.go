@@ -7,13 +7,14 @@ import (
 	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	"github.com/DouwaIO/hairtail/src/task"
 	"github.com/DouwaIO/hairtail/src/pipeline/queue"
+	"github.com/DouwaIO/hairtail/src/model"
 	"github.com/DouwaIO/hairtail/src/utils"
 )
 
 var Queue queue.Queue
 
 
-func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) error {
+func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) string {
 	//parsed, err := yaml_pipeline.ParseString(q.config)
 	//if err != nil {
 	//	return errors.New("yaml type error")
@@ -35,19 +36,27 @@ func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) error {
 	if len(pipeline) > 0 {
 		for _, pipeline2 := range pipeline {
 			if _, ok := task.Funcs[pipeline2.Type]; ok {
-				data2 := task.CallPipeline(pipeline2, data)
+				data2, status, err := task.CallPipeline(pipeline2, data)
+				if err != nil {
+					log.Printf("task: %s, err: %s\n", pipeline2, err)
+					return model.StatusError
+				}
+				if status != model.StatusSuccess {
+					return status
+				}
 				if data2 != nil {
 					data = data2
 				}
 			} else {
-				return nil
+				log.Printf("yaml task name error\n")
+				return model.StatusError
 			}
 
 		}
 	}
 	Queue.Done(ctx, gen_id)
 	log.Printf("done: %s\n", Queue.Info(ctx))
-	return nil
+	return model.StatusSuccess
 }
 
 

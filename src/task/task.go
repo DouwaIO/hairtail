@@ -40,14 +40,16 @@ func Call(m map[string]interface{}, name string, data []byte, params map[string]
     return
 }
 
-func CallPipeline(pipeline2 *yaml_pipeline.Container, data []byte) []byte {
+func CallPipeline(pipeline2 *yaml_pipeline.Container, data []byte) ([]byte, string, error) {
 	result,_ := Call(Funcs, pipeline2.Type, data, pipeline2.Settings)
 
-	if len(result) > 0 {
+	if len(result) > 2 {
 		data = result[0].Interface().([]byte)
-		return data
+		status := result[1].Interface().(string)
+		err := result[2].Interface().(error)
+		return data, status, err
 	}
-	return nil
+	return nil, "success", nil
 
 
 
