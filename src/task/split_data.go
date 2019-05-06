@@ -1,6 +1,7 @@
 package task
 
 import (
+	"log"
 	"fmt"
     // "github.com/DouwaIO/hairtail/src/schema"
     "encoding/json"
@@ -33,8 +34,8 @@ func split(data map[string]interface{},output_dict map[string]interface{},key__ 
     return output_dict,output_list
 }
 
-func SplitData(data []byte, params map[string]interface{}) ([]byte,error) {
-
+func SplitData(data []byte, params map[string]interface{}) ([]byte,string) {
+    log.Println("SplitData")
     myMap:=make(map[string]interface{})
     json.Unmarshal(data,&myMap)
     output_dict := make(map[string]interface{})
@@ -51,6 +52,6 @@ func SplitData(data []byte, params map[string]interface{}) ([]byte,error) {
     data2, _ := json.Marshal(list_data)
     // fmt.Println(string(data2))
 
-
-    return data2,nil
+    log.Println("result", string(data2))
+    return data2,"success"
 }

@@ -19,6 +19,7 @@ func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) string {
 	//if err != nil {
 	//	return errors.New("yaml type error")
 	//}
+	log.Printf("hello world")
         ctx := context.Background()
         gen_id := utils.GeneratorId()
         task2 := &queue.Task{
@@ -36,11 +37,7 @@ func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) string {
 	if len(pipeline) > 0 {
 		for _, pipeline2 := range pipeline {
 			if _, ok := task.Funcs[pipeline2.Type]; ok {
-				data2, status, err := task.CallPipeline(pipeline2, data)
-				if err != nil {
-					log.Printf("task: %s, err: %s\n", pipeline2, err)
-					return model.StatusError
-				}
+				data2, status := task.CallPipeline(pipeline2, data)
 				if status != model.StatusSuccess {
 					return status
 				}

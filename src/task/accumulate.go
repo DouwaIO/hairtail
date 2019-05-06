@@ -17,6 +17,7 @@ import (
 
 
 func Accumulate(data []byte, params map[string]interface{}) {
+	log.Println("Accumulate")
 	var list_data []interface{}
 	err := json.Unmarshal(data,&list_data)
 	if err != nil{
@@ -165,6 +166,6 @@ func Accumulate(data []byte, params map[string]interface{}) {
 			
 		}
 	}
-
+	//return nil, "success"
 	//return nil
 }

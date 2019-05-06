@@ -7,13 +7,15 @@ import (
 )
 
 
-func SelectData(data []byte, params map[string]interface{}) ([]byte,error){
-
+func SelectData(data []byte, params map[string]interface{}) ([]byte,string){
+	log.Println("SelectData")
+	
+	log.Println("data is %s",string(data))
 	var list_data []map[string]interface{}
 	err := json.Unmarshal(data,&list_data)
 	if err != nil{
 		log.Printf("%s", err)
-		return nil,err
+		return nil,"error"
 	}
 	
     include := params["include"]
@@ -65,7 +67,7 @@ func SelectData(data []byte, params map[string]interface{}) ([]byte,error){
 	}
 	
 	res_byte,_ := json.Marshal(res_list)
-	return res_byte,nil
+	return res_byte,"success"
 	// return nil
 }
 

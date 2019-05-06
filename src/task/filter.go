@@ -11,16 +11,16 @@ import (
 )
 
 
-func Filter(data []byte, params map[string]interface{}) ([]byte,[]byte,error){
+func Filter(data []byte, params map[string]interface{}) ([]byte,string,error){
 	var list_data []map[string]interface{}
 	err := json.Unmarshal(data,&list_data)
 	if err != nil{
-		return nil,nil,err
+		return nil,"error",err
 	}
 	
 	filter := params["filter"]
 	if filter == nil{
-		return nil,nil,errors.New("filter不存在")
+		return nil,"error",errors.New("filter不存在")
 	}
 
 	// fmt.Println(len(include.([]interface{})))
@@ -75,8 +75,8 @@ func Filter(data []byte, params map[string]interface{}) ([]byte,[]byte,error){
 	}
 
 	res_matching_byte,_ := json.Marshal(res_matching_list)
-	res_mismatching_byte,_ := json.Marshal(res_mismatching_list)
+	_,_ = json.Marshal(res_mismatching_list)
 
-	return res_matching_byte,res_mismatching_byte,nil
+	return res_matching_byte,"success",nil
 	// // return nil
 }

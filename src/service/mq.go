@@ -64,17 +64,17 @@ func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Con
 		go func() {
 		    for d := range msgs {
 		        log.Printf("Received a message: %s", d.Body)
-			//gen_id := utils.GeneratorId()
-			//newdata := &model.Data{
-			//	ID: gen_id,
-			//	Service: service,
-			//	Data: string(d.Body),
-			//}
-			//err = v.CreateData(newdata)
-			//if err != nil {
-			//	log.Printf("add data error")
-			//}
-			//v.DeleteData(newdata)
+			// gen_id := utils.GeneratorId()
+			// newdata := &model.Data{
+			// 	ID: gen_id,
+			// 	Service: service,
+			// 	Data: string(d.Body),
+			// }
+			// err = v.CreateData(newdata)
+			// if err != nil {
+			// 	log.Printf("add data error")
+			// }
+			// v.DeleteData(newdata)
 			currentTime := time.Now().Unix()
 			gen_id := utils.GeneratorId()
 			newdata := &model.Build{
