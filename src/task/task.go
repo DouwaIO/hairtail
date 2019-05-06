@@ -1,13 +1,13 @@
 package task
 
 import (
-	//"log"
 	//"fmt"
 	//"context"
 	"reflect"
-	"errors"
+	//"errors"
 	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	//"github.com/DouwaIO/hairtail/src/utils"
+	// "log"
 )
 
 var (
@@ -15,8 +15,8 @@ var (
 				       "HTTP_Send": HTTPSend,
 				       "test": Test,
 					   "test2": Test2,
-					   "split_data": SplitData,
-					   "select_data": SelectData,
+					   "even": SplitData,
+					   "select": SelectData,
 					   "filter":Filter,
 					   "accumulate":Accumulate}
 )
@@ -25,22 +25,24 @@ var (
 //map[string]interface{}
 func Call(m map[string]interface{}, name string, data []byte, params map[string]interface{}) (result []reflect.Value, err error) {
     f := reflect.ValueOf(m[name])
-    if len(params) != f.Type().NumIn() {
-        err = errors.New("The number of params is not adapted.")
-        return
-    }
+
+    //if len(params) != f.Type().NumIn() {
+    //    err = errors.New("The number of params is not adapted.")
+    //    return
+    //}
     in := make([]reflect.Value, 2)
     in[0] = reflect.ValueOf(data)
     in[1] = reflect.ValueOf(params)
     //for k, param := range params {
     //    in[k] = reflect.ValueOf(param)
-    //}
+	//}
     result = f.Call(in)
     return
 }
 
 func CallPipeline(pipeline2 *yaml_pipeline.Container, data []byte) []byte {
-	result, _ := Call(Funcs, pipeline2.Type, data, pipeline2.Settings)
+	result,_ := Call(Funcs, pipeline2.Type, data, pipeline2.Settings)
+
 	if len(result) > 0 {
 		data = result[0].Interface().([]byte)
 		return data
