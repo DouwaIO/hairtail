@@ -28,6 +28,7 @@ func Load(middleware ...gin.HandlerFunc) http.Handler {
 	e.POST("/api/pipeline", server.Pipeline)
 	e.POST("/api/data", server.PostData)
 	e.GET("/api/info", server.Info)
+	e.GET("/api/builds", server.GetBuilds)
 
 
 	e.POST("/api/pipeline/:pipeline_id/active", server.PipelineActive)

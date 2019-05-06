@@ -169,3 +169,26 @@ func Info(c *gin.Context) {
 	//pipelineID := c.Param("pipeline_id")
 	c.JSON(200, task_pipeline.Queue.Info(c))
 }
+
+func GetBuilds(c *gin.Context) {
+	service_name := c.Query("service")
+	pipeline_name := c.Query("pipeline")
+
+	pipeline, err := store.FromContext(c).GetPipeline(pipeline_name)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+	service, err := store.FromContext(c).GetService(service_name, pipeline.ID)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+	//pipelineID := c.Param("pipeline_id")
+	builds, err := store.FromContext(c).GetBuildList(service.ID)
+	if err != nil {
+		c.String(http.StatusBadRequest, err.Error())
+		return
+	}
+	c.JSON(200, builds)
+}
