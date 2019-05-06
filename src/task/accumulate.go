@@ -9,18 +9,19 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"strings"
-	// "log"
+	"log"
 	"strconv"
-	"errors"
+	//"errors"
 	"github.com/DouwaIO/hairtail/src/utils"
 )
 
 
-func Accumulate(data []byte, params map[string]interface{}) (error){
+func Accumulate(data []byte, params map[string]interface{}) {
 	var list_data []interface{}
 	err := json.Unmarshal(data,&list_data)
 	if err != nil{
-		return err
+		log.Printf("%s", err)
+		//return err
 	}
 
 	setting_map := params["map"]
@@ -38,7 +39,9 @@ func Accumulate(data []byte, params map[string]interface{}) (error){
 	
 	db, err := gorm.Open("postgres", "host=47.110.154.127 port=30011 user=postgres dbname=postgres sslmode=disable password=huansi@2017")
 	if err != nil{
-		return err
+		log.Printf("%s", err)
+		//log.Printf(err)
+		//return err
 	}
 
 
@@ -79,15 +82,17 @@ func Accumulate(data []byte, params map[string]interface{}) (error){
 
 
 			field_text += fmt.Sprintf(" %s text,", map_map[key])
-			field_text = strings.TrimRight(field_text,",")
-
 			field_value += fmt.Sprintf(" o.%s = '%s' and ", map_map[key],val_string)
-			field_value = strings.TrimRight(field_value,"and ")
+			
 		}
+		field_text = strings.TrimRight(field_text,",")
+		field_value = strings.TrimRight(field_value,"and ")
 		// 判断数据库是否存在
 		sql_str := fmt.Sprintf(`SELECT "id","name","data" FROM (
 			SELECT "id","name","data" FROM remote_data as d, jsonb_to_record(d.data) o (%s) WHERE %s
 		) as dd`,field_text,field_value)
+
+
 		row := db.Raw(sql_str).Row()
 		var result model.RemoteData
 		db_data_map := make(map[string]interface{})
@@ -110,14 +115,16 @@ func Accumulate(data []byte, params map[string]interface{}) (error){
 			
 
 			if db_data_target_val == nil || source_val == nil {
-				return errors.New("target_val或source_value不存在")
+				log.Printf("%s", err)
+				//return errors.New("target_val或source_value不存在")
 			}
 
-			if compute != "-"{ 		//如果操作符不是-
+			if compute != "_"{ 		//如果操作符不是-
 				source_val = source_val.(float64)
 			}else{
 				source_val = source_val.(float64)*(-1)
 			}
+			
 			db_data_target_val = db_data_target_val.(float64) + source_val.(float64)
 			// db_data_target_val = db_data_target_val + target_val //给数据库的值重新复制
 			db_data_map[target.(string)] = db_data_target_val
@@ -127,7 +134,8 @@ func Accumulate(data []byte, params map[string]interface{}) (error){
 
 			err := db.Model(&result).Update("data",byte_data).Error
 			if err != nil{
-				return err
+				log.Printf("%s", err)
+				//return err
 			}
 
 		}else{
@@ -149,7 +157,8 @@ func Accumulate(data []byte, params map[string]interface{}) (error){
 			result.ID = gen_id
 			err := db.Create(&result).Error
 			if err != nil{
-				return err
+				log.Printf("%s", err)
+				//return err
 			}
 			}
 
@@ -157,5 +166,5 @@ func Accumulate(data []byte, params map[string]interface{}) (error){
 		}
 	}
 
-	return nil
+	//return nil
 }

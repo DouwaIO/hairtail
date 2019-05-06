@@ -3,13 +3,16 @@ package task
 import (
     "encoding/json"
 	"strings"
+	"log"
 )
 
 
 func SelectData(data []byte, params map[string]interface{}) ([]byte,error){
+
 	var list_data []map[string]interface{}
 	err := json.Unmarshal(data,&list_data)
 	if err != nil{
+		log.Printf("%s", err)
 		return nil,err
 	}
 	
@@ -43,14 +46,16 @@ func SelectData(data []byte, params map[string]interface{}) ([]byte,error){
 				delete(list_data[i],exclude.([]interface{})[j].(string))
 			}
 			res_list = append(res_list,list_data[i])
+		}else{
+			res_list = list_data
 		}
 	}
-
 
 
 	// 进行重命名
 	for i := 0; i<len(res_list); i++{
 		for key := range res_list[i]{
+
 			if rename_map[key] != ""{
 				res_list[i][rename_map[key]] = res_list[i][key]
 				delete(res_list[i],key)

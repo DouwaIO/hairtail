@@ -156,11 +156,11 @@ func PostData(c *gin.Context) {
 }
 
 func PipelineActive(c *gin.Context) {
-	pipelineID := c.Param("pipeline_id")
-	c.JSON(200, "")
+	// pipelineID := c.Param("pipeline_id")
+	// c.JSON(200, "")
 }
 
 func PipelineHook(c *gin.Context) {
-	pipelineID := c.Param("pipeline_id")
-	c.JSON(200, "")
+	// pipelineID := c.Param("pipeline_id")
+	// c.JSON(200, "")
 }

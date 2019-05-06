@@ -13,6 +13,7 @@ import (
 	"strconv"
 	"errors"
 	"github.com/DouwaIO/hairtail/src/utils"
+	"log"
 )
 
 
@@ -90,6 +91,10 @@ func accumulate(data []byte, setting map[string]interface{}) (error){
 		sql_str := fmt.Sprintf(`SELECT "id","name","data" FROM (
 			SELECT "id","name","data" FROM remote_data as d, jsonb_to_record(d.data) o (%s) WHERE %s
 		) as dd`,field_text,field_value)
+
+
+		log.Printf("sql_str %s", sql_str)
+
 		row := db.Raw(sql_str).Row()
 		var result model.RemoteData
 		db_data_map := make(map[string]interface{})
