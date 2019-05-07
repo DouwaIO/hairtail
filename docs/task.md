@@ -8,31 +8,31 @@
     - 主动
     - 被动
 - 基本操作
-  - [] format格式化
+  - [ ] format格式化
       - 日期
       - 金额
-  - [] calculate计算
+  - [ ] calculate计算
       - 对两个字段进行计算，一般是数量计算
   - [x] even打平
       - 主从表转换成单表
-  - [] aggregate聚合
+  - [ ] aggregate聚合
       - 根据groupby条件进行聚合
       - 聚合类型：count, avg, sum
       - 支持定义输出格式
   - [x] filter过滤(支持数据分离，filter后会得到满足条件和不满足条件的两个数据集)
-  - [] join连接(左、右、全、内)
+  - [ ] join连接(左、右、全、内)
   - [x] select选择(选择需要的字段)
       - 过滤掉不需要的字段
-  - [] union合并
+  - [ ] union合并
       - 接收两个结果集，将其union all成一个结果集
 - 特殊操作
-  - [] dispatch分摊
+  - [ ] dispatch分摊
       - 根据特定条件，将数量按目标顺序进行从头到为分摊
   - [x] accumulate累加
       - 根据特定条件，将数量更新到目标记录中
 - 输出数据
-  - [] output
-  - [] url
+  - [ ] output
+  - [ ] url
 
 
 ## even
