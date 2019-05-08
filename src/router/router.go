@@ -9,6 +9,7 @@ import (
 	"github.com/DouwaIO/hairtail/src/server"
 	"github.com/Sirupsen/logrus"
 	"github.com/gin-gonic/gin"
+	task_pipeline "github.com/DouwaIO/hairtail/src/pipeline"
 )
 
 // Load loads the router
@@ -24,13 +25,19 @@ func Load(middleware ...gin.HandlerFunc) http.Handler {
 	e.Use(header.Secure)
 	e.Use(middleware...)
 
+	e.LoadHTMLGlob("views/*")
+	e.GET("/", func(c *gin.Context) {
+	          c.HTML(http.StatusOK, "hello.html",gin.H{
+			"data": task_pipeline.Queue.Info(c),
+		  })
+	})
 	e.POST("/api/schema", server.Schema)
 	e.POST("/api/pipeline", server.Pipeline)
 	e.POST("/api/data", server.PostData)
 	e.GET("/api/info", server.Info)
 	e.GET("/api/builds", server.GetBuilds)
-	e.GET("/info", server.Info)
-	e.GET("/builds", server.GetBuilds)
+	//e.GET("/info", server.Info)
+	//e.GET("/builds", server.GetBuilds)
 
 
 	e.POST("/api/pipeline/:pipeline_id/active", server.PipelineActive)
