@@ -14,6 +14,12 @@ import (
 	"github.com/DouwaIO/hairtail/src/yaml/schema"
 )
 
+func Dashboard(c *gin.Context) {
+	c.HTML(http.StatusOK,
+        "index.html",
+        gin.H{"queueInfo": task_pipeline.Queue.Info(c)})
+}
+
 func Schema(c *gin.Context) {
 	in := &model.Schema{}
 

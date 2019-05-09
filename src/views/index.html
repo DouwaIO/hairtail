@@ -1,0 +1,12 @@
+<!--Embed the header.html template at this location-->
+{{ template "header.html" .}}
+
+  <h1>Hello Gin!</h1>
+
+  <h2>Workders<h2>{{ .queueInfo.Stats.Workers }}
+  <h2>Running<h2>{{ .queueInfo.Stats.Running }}
+  <h2>Pending<h2>{{ .queueInfo.Stats.Pending }}
+  <h2>Complete<h2>{{ .queueInfo.Stats.Complete }}
+
+<!--Embed the footer.html template at this location-->
+{{ template "footer.html" .}}
