@@ -63,7 +63,7 @@ func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Con
 		forever := make(chan bool)
 		go func() {
 		    for d := range msgs {
-		        log.Printf("Received a message: %s", d.Body)
+		        log.Printf("Received a message")
 			// gen_id := utils.GeneratorId()
 			// newdata := &model.Data{
 			// 	ID: gen_id,
@@ -75,30 +75,32 @@ func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Con
 			// 	log.Printf("add data error")
 			// }
 			// v.DeleteData(newdata)
-			currentTime := time.Now().Unix()
-			gen_id := utils.GeneratorId()
-			newdata := &model.Build{
-				ID: gen_id,
-				Service: service,
-				Data: string(d.Body),
-				//Status: model.StatusPending,
-				Status: model.StatusRunning,
-				Timestamp: currentTime,
-				Timestamp2: int64(0),
-			}
-			err = v.CreateBuild(newdata)
-			if err != nil {
-				log.Printf("add data error")
-			}
-			status := task_pipeline.Pipeline(data, d.Body)
-			currentTime = time.Now().Unix()
-			newdata.Status = status
-			newdata.Timestamp2 = currentTime
-			err = v.UpdateBuild(newdata)
-			if err != nil {
-				log.Printf("add data error")
-			}
-		   }
+			go func(){
+				currentTime := time.Now().Unix()
+				gen_id := utils.GeneratorId()
+				newdata := &model.Build{
+					ID: gen_id,
+					Service: service,
+					Data: string(d.Body),
+					//Status: model.StatusPending,
+					Status: model.StatusRunning,
+					Timestamp: currentTime,
+					Timestamp2: int64(0),
+				}
+				err = v.CreateBuild(newdata)
+				if err != nil {
+					log.Printf("add data error")
+				}
+				status := task_pipeline.Pipeline(data, d.Body)
+				currentTime = time.Now().Unix()
+				newdata.Status = status
+				newdata.Timestamp2 = currentTime
+				err = v.UpdateBuild(newdata)
+				if err != nil {
+					log.Printf("add data error")
+				}
+			}()
+			}	
 		}()
 		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 		<-forever

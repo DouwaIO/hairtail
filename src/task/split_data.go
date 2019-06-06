@@ -7,9 +7,11 @@ import (
     "encoding/json"
     // "reflect"
     // "errors"
+    "time"
     // "log"
 )
 
+var start int
 
 func typeof(v interface{}) string {
     return fmt.Sprintf("%T", v)
@@ -35,6 +37,10 @@ func split(data map[string]interface{},output_dict map[string]interface{},key__ 
 }
 
 func SplitData(data []byte, params map[string]interface{}) ([]byte,string) {
+    start := time.Now().Unix()
+    log.Println("split_data start is ",start)
+    start += 1
+
     log.Println("SplitData")
     myMap:=make(map[string]interface{})
     json.Unmarshal(data,&myMap)
@@ -52,6 +58,6 @@ func SplitData(data []byte, params map[string]interface{}) ([]byte,string) {
     data2, _ := json.Marshal(list_data)
     // fmt.Println(string(data2))
 
-    log.Println("result", string(data2))
+    // log.Println("result", string(data2))
     return data2,"success"
 }

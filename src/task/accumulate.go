@@ -13,11 +13,21 @@ import (
 	"strconv"
 	//"errors"
 	"github.com/DouwaIO/hairtail/src/utils"
+	"time"
 )
 
+var loop_num int
+var end int64
+
+// var db *gorm.DB
 
 func Accumulate(data []byte, params map[string]interface{}) {
 	log.Println("Accumulate")
+	
+	start := time.Now().Unix()
+    log.Println("accumulate start is ",start)
+    start += 1
+
 	var list_data []interface{}
 	err := json.Unmarshal(data,&list_data)
 	if err != nil{
@@ -38,12 +48,15 @@ func Accumulate(data []byte, params map[string]interface{}) {
 		map_map[d[0]] = d[1]
 	}
 	
+	
 	db, err := gorm.Open("postgres", "host=47.110.154.127 port=30011 user=postgres dbname=postgres sslmode=disable password=huansi@2017")
 	if err != nil{
 		log.Printf("%s", err)
 		//log.Printf(err)
 		//return err
 	}
+
+	tx := db.Begin()
 
 
 	for i :=0; i<len(list_data); i++{
@@ -94,11 +107,17 @@ func Accumulate(data []byte, params map[string]interface{}) {
 		) as dd`,field_text,field_value)
 
 
-		row := db.Raw(sql_str).Row()
+		row := tx.Raw(sql_str).Row()
 		var result model.RemoteData
 		db_data_map := make(map[string]interface{})
 
-		row.Scan(&result.ID, &result.Name, &result.Data)
+		err = row.Scan(&result.ID, &result.Name, &result.Data)
+		// if err != nil{
+		// 	// tx.Rollback()
+		// 	log.Printf("%s,rollback", err)
+
+		// 	// return
+		// }
 		is_exist := false
 		if result.ID != "" {
 			is_exist = true
@@ -133,10 +152,12 @@ func Accumulate(data []byte, params map[string]interface{}) {
 			
 			byte_data,_ := json.Marshal(db_data_map)
 
-			err := db.Model(&result).Update("data",byte_data).Error
+			err := tx.Model(&result).Update("data",byte_data).Error
 			if err != nil{
-				log.Printf("%s", err)
+				tx.Rollback()
+				log.Printf("%s,rollback", err)
 				//return err
+				return
 			}
 
 		}else{
@@ -156,9 +177,11 @@ func Accumulate(data []byte, params map[string]interface{}) {
 			gen_id := utils.GeneratorId()
 			result.Data = byte_data
 			result.ID = gen_id
-			err := db.Create(&result).Error
+			err := tx.Create(&result).Error
 			if err != nil{
-				log.Printf("%s", err)
+				tx.Rollback()
+				log.Printf("%s, rollback", err)
+				return
 				//return err
 			}
 			}
@@ -166,6 +189,21 @@ func Accumulate(data []byte, params map[string]interface{}) {
 			
 		}
 	}
+
+	loop_num += 1
+	fmt.Println("loop_num is ",loop_num)
+	
+	end := time.Now().Unix()
+	fmt.Println("end is ",end)
+	
+
+	tx.Commit()
+	err = db.Close()
+	if err != nil{
+		log.Println(err)
+	}
+	
 	//return nil, "success"
+	
 	//return nil
 }

@@ -443,7 +443,7 @@ func main() {
         }
 	s.Poll(ctx, fn, "abc2")
 	//fmt.Println("s %v", s.Info(ctx))
-	log.Printf("poll: %s\n", s.Info(ctx))
+	// log.Printf("poll: %s\n", s.Info(ctx))
 	res := s.Extend(ctx, "abc")
 	log.Printf("extend err: %s\n", res)
 	log.Printf("extend: %s\n", s.Info(ctx))
@@ -459,7 +459,7 @@ func main() {
 
 func createFilterFunc(filter string) (Filter, error) {
 	return func(task *Task) bool {
-	        log.Printf("task: %s\n", task)
+	        // log.Printf("task: %s\n", task)
 		return true
 	}, nil
 }

@@ -32,7 +32,7 @@ func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) string {
            fmt.Println("s", err)
         }
 	Queue.Poll(ctx, fn, gen_id)
-	log.Printf("poll: %s\n", Queue.Info(ctx))
+	// log.Printf("poll: %s\n", Queue.Info(ctx))
 
 	if len(pipeline) > 0 {
 		for _, pipeline2 := range pipeline {

@@ -133,7 +133,7 @@ func encode(dst, id []byte) {
 // SayHello implements helloworld.GreeterServer
 func GeneratorId() string {
 	data := New().String()
-	fmt.Printf("%s\n", data)
+	// fmt.Printf("%s\n", data)
 	return data
 }
 

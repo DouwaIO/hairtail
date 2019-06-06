@@ -4,13 +4,19 @@ import (
     "encoding/json"
 	"strings"
 	"log"
+	"time"
 )
 
 
 func SelectData(data []byte, params map[string]interface{}) ([]byte,string){
 	log.Println("SelectData")
 	
-	log.Println("data is %s",string(data))
+	start := time.Now().Unix()
+    log.Println("select start is ",start)
+    start += 1
+
+
+	// log.Println("data is %s",string(data))
 	var list_data []map[string]interface{}
 	err := json.Unmarshal(data,&list_data)
 	if err != nil{

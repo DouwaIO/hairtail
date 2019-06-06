@@ -253,7 +253,7 @@ loop:
 
 func CreateFilterFunc(filter string) (Filter, error) {
 	return func(task *Task) bool {
-	        log.Printf("task: %s\n", task)
+	        // log.Printf("task: %s\n", task)
 		return true
 	}, nil
 }
