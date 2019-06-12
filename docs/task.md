@@ -24,6 +24,8 @@
         - 根据特定条件，将数量按目标顺序进行从头到为分摊
     - [x] accumulate累加
         - 根据特定条件，将数量更新到目标记录中
+    - [] case-update分类更新
+        - 根据特定条件，将数量更新到目标记录中
 - 扩展`task`
   - [ ] webhook
 
@@ -269,3 +271,65 @@ settings:
 |001|张三|130|
 |001|李四|50|
 
+
+## case-update
+
+分组更新，根据特定条件，将数量更新到目标记录中
+
+1. 输入
+  - 一个JSON列表，每一行列表一个对象
+1. 输出
+  - 成功：状态0
+  - 失败：状态1，并带有错误信息
+1. 参数
+  - map: 关联条件，关联的键对
+  - case:
+    - type: case中两个字段的类型：`number`数量，`date`日期
+    - source: 本数据集的更新key
+    - target: 目标数据库的更新key
+    - compute: 计算方法：`+`累加，`-`扣减，`*`乘以，`/`除以
+  - when: 若干个结算结果或计算结果区间：`100`或`100,200`
+  - update: 与`when`一一对应，每一个`when`对应一个`update`，格式为源字段更新为目标字段，如：`quantity=delay_dot`将源`quantity`更新到目标`delay_dot`字段
+1. 注意
+
+### 例子
+
+- 例子1
+
+配置
+```yaml
+type: case-udpate
+settings:
+  map:
+    - order_no=order_no
+  case:
+    type: date
+    source: input_date
+    target: input_date
+    compute: -
+  when:
+    - 10000,8
+    - -7,7
+  update:
+    - quantity=delay_dot
+    - quantity=ontime_dot
+```
+
+输入
+```json
+[{"order_no": "001", "input_date": "2019-06-07", "qty": 30}
+,{"order_no": "001", "input_date": "2019-06-08", "qty": 20}
+]
+```
+
+表中数据
+
+|order_no|input_date|delay_dot|ontime_dot|
+|--------|--------------|---|--|--|
+|001|2019-06-01|5|95|
+
+更新后
+
+|order_no|input_date|delay_dot|ontime_dot|
+|--------|--------------|---|--|--|
+|001|2019-06-01|25|125|
