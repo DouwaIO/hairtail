@@ -19,12 +19,15 @@
         - 过滤掉不需要的字段
     - [ ] union合并
         - 接收两个结果集，将其union all成一个结果集
+    - [x] case分类
   - 特殊操作
     - [ ] dispatch分摊
         - 根据特定条件，将数量按目标顺序进行从头到为分摊
     - [x] accumulate累加
         - 根据特定条件，将数量更新到目标记录中
-    - [] case-update分类更新
+    - [x] fetch获取表数据
+    - [ ] update更新表数据
+    - [x] case-update分类更新
         - 根据特定条件，将数量更新到目标记录中
 - 扩展`task`
   - [ ] webhook
@@ -145,6 +148,69 @@ settings:
 ,{"order_no": "001", "sale_name": "李四"}
 ]
 ```
+
+
+## case
+
+分类，将一个字段按特定条件进行分类
+
+1. 输入
+  - 一个JSON列表，每一行列表一个对象
+1. 输出
+  - 成功：状态0
+  - 失败：状态1，并带有错误信息
+1. 参数
+  - map: 关联条件，关联的键对
+  - case:
+    - type: case中两个字段的类型：`number`数量，`date`日期
+    - source: 本数据集的更新key
+    - target: 目标数据库的更新key
+    - compute: 计算方法：`+`累加，`-`扣减，`*`乘以，`/`除以
+  - when: 若干个结算结果或计算结果区间：`100`或`100,200`
+  - update: 与`when`一一对应，每一个`when`对应一个`update`，格式为源字段更新为目标字段，如：`quantity=delay_dot`将源`quantity`更新到目标`delay_dot`字段
+1. 注意
+
+### 例子
+
+- 例子1
+
+配置
+```yaml
+type: case
+settings:
+  case:
+    type: date
+    source: fabric_input_date
+    target: clothes_input_date
+    compute: -
+  when:
+    - 10000,8
+    - -7,7
+  update:
+    - quantity=delay_dot
+    - quantity=ontime_dot
+```
+
+输入
+```json
+[{"order_no": "001", "input_date": "2019-06-07", "qty": 30}
+,{"order_no": "001", "input_date": "2019-06-08", "qty": 20}
+]
+```
+
+表中数据
+
+|order_no|input_date|delay_dot|ontime_dot|
+|--------|--------------|---|--|--|
+|001|2019-06-01|5|95|
+
+更新后
+
+|order_no|input_date|delay_dot|ontime_dot|
+|--------|--------------|---|--|--|
+|001|2019-06-01|25|125|
+
+
 
 ## filter
 
@@ -271,6 +337,51 @@ settings:
 |001|张三|130|
 |001|李四|50|
 
+## fetch
+
+根据特定条件，从数据库中获取数据
+
+1. 输入
+  - 一个JSON列表，每一行列表一个对象
+1. 输出
+  - 成功：状态0，输出两个列表，源数据列表和获取到的目标数据列表
+  - 失败：状态1，并带有错误信息  
+1. 参数
+  - map: 关联条件，关联的键对
+1. 注意
+
+### 例子
+
+- 例子1
+
+配置
+```yaml
+type: fetch
+settings:
+  map:
+    - order_no=order_no
+    - sale_name=sale_full_name
+```
+
+输入
+```json
+[{"order_no": "001", "sale_name": "张三", "qty": 30}
+,{"order_no": "001", "sale_name": "李四", "qty": 50}
+]
+```
+
+表中数据
+
+|order_no|sale_full_name|qty|
+|--------|--------------|---|
+|001|张三|100|
+
+更新后
+
+|order_no|sale_full_name|qty|
+|--------|--------------|---|
+|001|张三|130|
+
 
 ## case-update
 
@@ -290,7 +401,9 @@ settings:
     - compute: 计算方法：`+`累加，`-`扣减，`*`乘以，`/`除以
   - when: 若干个结算结果或计算结果区间：`100`或`100,200`
   - update: 与`when`一一对应，每一个`when`对应一个`update`，格式为源字段更新为目标字段，如：`quantity=delay_dot`将源`quantity`更新到目标`delay_dot`字段
+  - ignore: 是否忽略，默认为：true，如果匹配不到是否忽略，不忽略将插入新记录
 1. 注意
+  - 如果`ignore`为`false`，那么插入数据对应的`compute`为`+`时插入正数，为`-`时插入负数，为`*`和`/`时插入原数
 
 ### 例子
 
@@ -313,12 +426,14 @@ settings:
   update:
     - quantity=delay_dot
     - quantity=ontime_dot
+  ignore: false
 ```
 
 输入
 ```json
 [{"order_no": "001", "input_date": "2019-06-07", "qty": 30}
 ,{"order_no": "001", "input_date": "2019-06-08", "qty": 20}
+,{"order_no": "002", "input_date": "2019-06-02", "qty": 15}
 ]
 ```
 
@@ -333,3 +448,4 @@ settings:
 |order_no|input_date|delay_dot|ontime_dot|
 |--------|--------------|---|--|--|
 |001|2019-06-01|25|125|
+|002|2019-06-02|0|15|
