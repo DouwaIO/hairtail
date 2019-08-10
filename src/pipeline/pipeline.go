@@ -2,17 +2,16 @@ package pipeline
 
 import (
 	"context"
-	"log"
 	"fmt"
-	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
-	"github.com/DouwaIO/hairtail/src/task"
-	"github.com/DouwaIO/hairtail/src/pipeline/queue"
 	"github.com/DouwaIO/hairtail/src/model"
+	"github.com/DouwaIO/hairtail/src/pipeline/queue"
+	"github.com/DouwaIO/hairtail/src/task"
 	"github.com/DouwaIO/hairtail/src/utils"
+	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	"log"
 )
 
 var Queue queue.Queue
-
 
 func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) string {
 	//parsed, err := yaml_pipeline.ParseString(q.config)
@@ -20,17 +19,17 @@ func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) string {
 	//	return errors.New("yaml type error")
 	//}
 	log.Printf("hello world")
-        ctx := context.Background()
-        gen_id := utils.GeneratorId()
-        task2 := &queue.Task{
-	         ID: gen_id,
-	         Data: data,
-        }
-        Queue.Push(ctx, task2)
-        fn, err := queue.CreateFilterFunc("filter")
-        if err != nil {
-           fmt.Println("s", err)
-        }
+	ctx := context.Background()
+	gen_id := utils.GeneratorId()
+	task2 := &queue.Task{
+		ID:   gen_id,
+		Data: data,
+	}
+	Queue.Push(ctx, task2)
+	fn, err := queue.CreateFilterFunc("filter")
+	if err != nil {
+		fmt.Println("s", err)
+	}
 	Queue.Poll(ctx, fn, gen_id)
 	// log.Printf("poll: %s\n", Queue.Info(ctx))
 
@@ -55,5 +54,3 @@ func Pipeline(pipeline []*yaml_pipeline.Container, data []byte) string {
 	log.Printf("done: %s\n", Queue.Info(ctx))
 	return model.StatusSuccess
 }
-
-

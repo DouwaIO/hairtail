@@ -9,11 +9,11 @@ import (
 
 	"github.com/DouwaIO/hairtail/src/router"
 	//"github.com/DouwaIO/hairtail/src/store"
-	"github.com/DouwaIO/hairtail/src/store/datastore"
 	"github.com/DouwaIO/hairtail/src/router/middleware"
-	"log"
 	task_service "github.com/DouwaIO/hairtail/src/service"
+	"github.com/DouwaIO/hairtail/src/store/datastore"
 	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	"log"
 	//"github.com/DouwaIO/hairtail/src/task"
 	"github.com/DouwaIO/hairtail/src/model"
 	"github.com/DouwaIO/hairtail/src/pipeline"
@@ -79,28 +79,24 @@ func run(c *cli.Context) error {
 	for _, service := range services {
 		parsed, err := yaml_pipeline.ParseString(service.Data)
 		if err != nil {
-		       return nil
+			return nil
 		}
 
 		if len(parsed.Services) > 0 {
-		       for _, service2 := range parsed.Services {
-			if service2.Name == service.Name && service2.Type == "MQ" {
-				//log.Printf("Received a message: %s", service)
-				log.Printf("run service:", service.Name)
+			for _, service2 := range parsed.Services {
+				if service2.Name == service.Name && service2.Type == "MQ" {
+					//log.Printf("Received a message: %s", service)
+					log.Printf("run service:", service.Name)
 
-				task_service.Service(service2, parsed.Pipeline, service.ID, store_)
+					task_service.Service(service2, parsed.Pipeline, service.ID, store_)
 
+				}
 			}
-		       }
 		}
 	}
 
-	if !c.Bool("lets-encrypt") {
-		return http.ListenAndServe(
-			c.String("server-addr"),
-			handler,
-		)
-	}
-
-    return nil
+	return http.ListenAndServe(
+		c.String("server-addr"),
+		handler,
+	)
 }
