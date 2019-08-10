@@ -1,0 +1,42 @@
+---
+version: v1
+kind: pipeline
+steps:
+  - name: even
+    type: even
+    settings:
+      a: aa
+
+  - name: select
+    desc: select
+    type: select
+    settings:
+      rename:
+      - data__bill_no=bill_no
+      - data__details__fabric_no=fabric_no
+      - data__details__quantity=quantity
+
+  - name: accumulate
+    desc: accumulate
+    type: accumulate
+    settings:
+      map:
+        - fabric_no=fabric_no
+        - bill_no=bill_no
+      source: quantity
+      target: quantity
+      compute: +
+      ignore: false
+---
+version: v1
+kind: service
+services:
+  - name: testMQ
+    type: MQ
+    settings:
+      protocol: amqp
+      host: 47.97.182.182:32222
+      user: root
+      pwd: !!str 123456
+      topic: hello
+      ackPolicy: immediate
