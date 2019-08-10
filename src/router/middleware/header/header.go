@@ -18,7 +18,7 @@ import (
 	"net/http"
 	"time"
 
-//	"gitlab.com/douwa/registry/dougo/src/dougo/version"
+	//	"gitlab.com/douwa/registry/dougo/src/dougo/version"
 	"github.com/gin-gonic/gin"
 )
 

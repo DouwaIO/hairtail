@@ -14,10 +14,10 @@ import (
 	"github.com/DouwaIO/hairtail/src/store/datastore"
 	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	"log"
-	//"github.com/DouwaIO/hairtail/src/task"
-	"github.com/DouwaIO/hairtail/src/model"
-	"github.com/DouwaIO/hairtail/src/pipeline"
-	"github.com/DouwaIO/hairtail/src/pipeline/queue"
+	// "github.com/DouwaIO/hairtail/src/task"
+	// "github.com/DouwaIO/hairtail/src/model"
+	// "github.com/DouwaIO/hairtail/src/pipeline"
+	// "github.com/DouwaIO/hairtail/src/pipeline/queue"
 )
 
 func main() {
@@ -66,7 +66,7 @@ func run(c *cli.Context) error {
 	store_ := datastore.New(
 		c.String("db-url"),
 	)
-	pipeline.Queue = model.WithTaskStore(queue.New(), store_)
+	// pipeline.Queue = model.WithTaskStore(queue.New(), store_)
 
 	handler := router.Load(
 		middleware.Store(c, store_),
@@ -77,7 +77,7 @@ func run(c *cli.Context) error {
 	services, _ := store_.GetServiceAllList()
 	log.Printf("Received a message: %s", services)
 	for _, service := range services {
-		parsed, err := yaml_pipeline.ParseString(service.Data)
+		parsed, err := yaml_pipeline.ParseString(service.Settings)
 		if err != nil {
 			return nil
 		}
