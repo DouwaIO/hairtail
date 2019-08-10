@@ -24,7 +24,7 @@ import (
 	"gitlab.com/douwa/registry/dougo/src/dougo/store"
 
 	//"gitlab.com/douwa/registry/dougo/src/dougo/server"
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	pb "gitlab.com/douwa/registry/dougo/src/dougo/grpc/user"
 
 	"github.com/gin-gonic/gin"

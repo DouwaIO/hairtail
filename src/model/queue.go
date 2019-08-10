@@ -3,7 +3,7 @@ package model
 import (
 	"context"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	//"gitlab.com/douwa/registry/dougo/src/dougo/core/queue"
 	"github.com/DouwaIO/hairtail/src/pipeline/queue"
 )

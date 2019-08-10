@@ -23,7 +23,7 @@ import (
 	"gitlab.com/douwa/registry/dougo/src/dougo/store"
 	"github.com/gin-gonic/gin"
 
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"encoding/json"
 	pb "gitlab.com/douwa/registry/dougo/src/dougo/grpc/user"
 )

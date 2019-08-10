@@ -7,7 +7,7 @@ import (
 	"github.com/DouwaIO/hairtail/src/router/middleware/ginrus"
 	"github.com/DouwaIO/hairtail/src/router/middleware/header"
 	"github.com/DouwaIO/hairtail/src/server"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"github.com/gin-gonic/gin"
 )
 

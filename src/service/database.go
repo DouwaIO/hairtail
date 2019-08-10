@@ -7,7 +7,7 @@ import (
 
         _ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/jinzhu/gorm"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 func DB(db_type, host, port, user, pwd, name, table, column string, rows_count, timeout int) error {

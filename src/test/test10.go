@@ -4,7 +4,7 @@ package main
 import (
 	"github.com/jinzhu/gorm"
     _ "github.com/jinzhu/gorm/dialects/mysql"
-	"github.com/Sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 )
 
 func check(db_type string, connect string, sql string) (error){
