@@ -7,50 +7,26 @@ import (
     "io/ioutil"
 )
 
-func HTTPSend(data []byte, params map[string]interface{}) {
+func HTTPSend(data []byte, settings map[string]interface{}) (map[string][]byte, error) {
     reader := bytes.NewReader(data)
-    request, err := http.NewRequest("POST", params["url"].(string), reader)
+    request, err := http.NewRequest("POST", settings["url"].(string), reader)
     if err != nil {
         fmt.Println(err.Error())
-        return
+        return nil, err
     }
     request.Header.Set("Content-Type", "application/json;charset=UTF-8")
     client := http.Client{}
     resp, err := client.Do(request)
     if err != nil {
         fmt.Println(err.Error())
-        return
+        return nil, err
     }
     respBytes, err := ioutil.ReadAll(resp.Body)
     if err != nil {
         fmt.Println(err.Error())
-        return
+        return nil, err
     }
 
     fmt.Println(string(respBytes))
-    return
+    return nil, nil
 }
-
-//func HTTPSend(data []byte, url string) []byte {
-//    reader := bytes.NewReader(data)
-//    request, err := http.NewRequest("POST", url, reader)
-//    if err != nil {
-//        fmt.Println(err.Error())
-//        return
-//    }
-//    request.Header.Set("Content-Type", "application/json;charset=UTF-8")
-//    client := http.Client{}
-//    resp, err := client.Do(request)
-//    if err != nil {
-//        fmt.Println(err.Error())
-//        return
-//    }
-//    respBytes, err := ioutil.ReadAll(resp.Body)
-//    if err != nil {
-//        fmt.Println(err.Error())
-//        return
-//    }
-//
-//    fmt.Println(string(respBytes))
-//    return
-//}
