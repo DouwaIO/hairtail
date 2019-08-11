@@ -40,7 +40,7 @@ func Call(m map[string]interface{}, name string, data []byte, params map[string]
     return
 }
 
-func CallPipeline(pipeline2 *yaml_pipeline.Container, data []byte) ([]byte, string) {
+func CallPipeline(pipeline2 *yaml_pipeline.Task, data []byte) ([]byte, string) {
 	result,_ := Call(Funcs, pipeline2.Type, data, pipeline2.Settings)
 
 	if len(result) >= 2 {

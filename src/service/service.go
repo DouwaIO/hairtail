@@ -1,21 +1,58 @@
 package service
 
 import (
-	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	yaml "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	"github.com/DouwaIO/hairtail/src/store"
+	"github.com/DouwaIO/hairtail/src/pipeline"
 )
 
-func CallService(service *yaml_pipeline.Container, pipeline2 []*yaml_pipeline.Container, service2 string, v store.Store) error {
-	if service.Type == "MQ" {
-		go MQ(service.Settings["protocol"].(string), service.Settings["host"].(string), service.Settings["user"].(string), service.Settings["pwd"].(string), service.Settings["topic"].(string), service.Settings["ackPolicy"].(string), pipeline2, service2, v)
-	}
-	if service.Type == "DB" {
-		go DB(service.Settings["db_type"].(string), service.Settings["host"].(string), service.Settings["port"].(string), service.Settings["user"].(string), service.Settings["pwd"].(string), service.Settings["name"].(string), service.Settings["table"].(string), service.Settings["column"].(string), 1, 1)
-	}
-	return nil
+type Service struct {
+	Name          string
+	Desc          string
+	Type          string
+	Settings      map[string]interface{}
+    Steps         []*yaml.Task
+    // database store
+    Store         *store.Store
 }
 
 
-func Service(service *yaml_pipeline.Container, yaml_pipeline []*yaml_pipeline.Container, service2 string, v store.Store) error {
-	return CallService(service, yaml_pipeline, service2, v)
+func (s *Service) Run() error {
+	if s.Type == "MQ" {
+		go MQ(s)
+	} else if s.Type == "DB" {
+		// go DB(service.Settings["db_type"].(string), service.Settings["host"].(string), service.Settings["port"].(string), service.Settings["user"].(string), service.Settings["pwd"].(string), service.Settings["name"].(string), service.Settings["table"].(string), service.Settings["column"].(string), 1, 1)
+	}
+
+	return nil
+}
+
+func (s *Service) RunStep(data []byte) error {
+	// newdata := &model.Build{
+	// 	Service: service,
+	// 	Data:    string(d.Body),
+	// 	//Status: model.StatusPending,
+	// 	Status:     model.StatusRunning,
+	// 	Timestamp:  currentTime,
+	// 	Timestamp2: int64(0),
+	// }
+	// err = v.CreateBuild(newdata)
+	// if err != nil {
+	// 	log.Printf("add data error")
+	// }
+	// status := yaml.Pipeline(data, d.Body)
+	// currentTime = time.Now().Unix()
+	// newdata.Status = status
+	// newdata.Timestamp2 = currentTime
+	// err = v.UpdateBuild(newdata)
+	// if err != nil {
+	// 	log.Printf("add data error")
+	// }
+
+    p := pipeline.Pipeline{
+        Tasks:  s.Steps,
+    }
+
+    _, err := p.Run(data)
+    return err
 }

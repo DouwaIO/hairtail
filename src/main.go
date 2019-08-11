@@ -8,11 +8,11 @@ import (
 	"github.com/urfave/cli"
 
 	"github.com/DouwaIO/hairtail/src/router"
-	//"github.com/DouwaIO/hairtail/src/store"
 	"github.com/DouwaIO/hairtail/src/router/middleware"
-	task_service "github.com/DouwaIO/hairtail/src/service"
+	"github.com/DouwaIO/hairtail/src/service"
+	// "github.com/DouwaIO/hairtail/src/store"
 	"github.com/DouwaIO/hairtail/src/store/datastore"
-	yaml_pipeline "github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	yaml "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	"log"
 	// "github.com/DouwaIO/hairtail/src/task"
 	// "github.com/DouwaIO/hairtail/src/model"
@@ -74,22 +74,29 @@ func run(c *cli.Context) error {
 	)
 
 	//启动数据库里面的service
-	services, _ := store_.GetServiceAllList()
-	log.Printf("Received a message: %s", services)
-	for _, service := range services {
-		parsed, err := yaml_pipeline.ParseString(service.Settings)
+	pipelines, _ := store_.GetPipelines("")
+	for _, pl := range pipelines {
+		log.Printf("start pipeline: %s", pl.Name)
+		parsed, err := yaml.ParseString(pl.Config)
 		if err != nil {
 			return nil
 		}
 
-		if len(parsed.Services) > 0 {
-			for _, service2 := range parsed.Services {
-				if service2.Name == service.Name && service2.Type == "MQ" {
-					//log.Printf("Received a message: %s", service)
-					log.Printf("run service:", service.Name)
+		for _, s := range parsed.Services {
+			if s.Type == "MQ" {
+				log.Printf("run service:", s.Name)
 
-					task_service.Service(service2, parsed.Pipeline, service.ID, store_)
-
+				svc := service.Service{
+					Name:     s.Name,
+					Desc:     s.Desc,
+					Type:     s.Type,
+					Settings: s.Settings,
+					Steps:    parsed.Steps,
+					Store:    &store_,
+				}
+				err := svc.Run()
+				if err != nil {
+					return nil
 				}
 			}
 		}

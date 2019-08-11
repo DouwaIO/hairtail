@@ -9,15 +9,14 @@ import (
 )
 
 type (
-	Schema struct {
+	Config struct {
 		Version string `yaml:"version"`
 		Kind    string `yaml:"kind"`
-		Name    string `yaml:"name"`
-		Services []*Container `yaml:"services,omitempty"`
-		Pipeline []*Container `yaml:"steps"`
+		Services []*Task `yaml:"services,omitempty"`
+		Steps []*Task `yaml:"steps"`
 	}
 
-	Container struct {
+	Task struct {
 		Name          string                    `yaml:"name"`
 		Desc          string                    `yaml:"desc,omitempty"`
 		Type          string                    `yaml:"type"`
@@ -27,7 +26,7 @@ type (
 )
 
 // Parse parses the configuration from bytes b.
-func Parse(r io.Reader) (*Schema, error) {
+func Parse(r io.Reader) (*Config, error) {
 	out, err := ioutil.ReadAll(r)
 	if err != nil {
 		return nil, err
@@ -36,8 +35,8 @@ func Parse(r io.Reader) (*Schema, error) {
 }
 
 // ParseBytes parses the configuration from bytes b.
-func ParseBytes(b []byte) (*Schema, error) {
-	out := new(Schema)
+func ParseBytes(b []byte) (*Config, error) {
+	out := new(Config)
 	err := yaml.Unmarshal(b, out)
 	if err != nil {
 		return nil, err
@@ -47,7 +46,7 @@ func ParseBytes(b []byte) (*Schema, error) {
 }
 
 // ParseString parses the configuration from string s.
-func ParseString(s string) (*Schema, error) {
+func ParseString(s string) (*Config, error) {
 	return ParseBytes(
 		[]byte(s),
 	)

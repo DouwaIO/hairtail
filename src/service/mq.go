@@ -1,28 +1,27 @@
 package service
 
 import (
-	"github.com/DouwaIO/hairtail/src/model"
-	task_pipeline "github.com/DouwaIO/hairtail/src/pipeline"
-	"github.com/DouwaIO/hairtail/src/store"
-	"github.com/DouwaIO/hairtail/src/utils"
-	"github.com/DouwaIO/hairtail/src/yaml/pipeline"
-	"github.com/streadway/amqp"
 	"log"
-	"time"
+	"fmt"
+
+	"github.com/streadway/amqp"
 )
 
-func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Container, service string, v store.Store) error {
-	//datas, err := v.GetDataList(service)
-	//if err != nil {
-	//	log.Printf("no cache data")
-	//}
-	//for _, d := range datas {
-	//	task_pipeline.Pipeline(data, []byte(d.Data))
-	//	v.DeleteData(d)
-	//}
+// func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Task, service string, v store.Store) error {
+func MQ(s *Service) error {
+    consumerName := ""
+    protocol := s.Settings["protocol"].(string)
+    topic := s.Settings["topic"].(string)
+    // ackPolicy := settings["ackPolicy"].(string)
+
+    connectStr := fmt.Sprintf("%s://%s:%s@%s/",
+        protocol,
+        s.Settings["user"].(string),
+        s.Settings["pwd"].(string),
+        s.Settings["host"].(string))
+
 	if protocol == "amqp" {
-		mq_connct := protocol + "://" + user + ":" + pwd + "@" + host + "/"
-		conn, err := amqp.Dial(mq_connct)
+		conn, err := amqp.Dial(connectStr)
 		if err != nil {
 			return err
 		}
@@ -36,72 +35,49 @@ func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Con
 
 		q, err := ch.QueueDeclare(
 			topic, // name
-
-			false, // durable
+			true,  // durable
 			false, // delete when unused
 			false, // exclusive
 			false, // no-wait
 			nil,   // arguments
 		)
 		if err != nil {
+            // Failed to declare a queue
 			return err
 		}
 
 		msgs, err := ch.Consume(
-			q.Name, // queue
-			"",     // consumer
-			true,   // auto-ack
-			false,  // exclusive
-			false,  // no-local
-			false,  // no-wait
-			nil,    // args
+			q.Name,       // queue
+			consumerName, // consumer
+			false,        // auto-ack
+			false,        // exclusive
+			false,        // no-local
+			false,        // no-wait
+			nil,          // args
 		)
 		if err != nil {
+            // Failed to register a consumer
 			return err
 		}
 
 		forever := make(chan bool)
 		go func() {
 			for d := range msgs {
-				log.Printf("Received a message")
-				// gen_id := utils.GeneratorId()
-				// newdata := &model.Data{
-				// 	ID: gen_id,
-				// 	Service: service,
-				// 	Data: string(d.Body),
-				// }
-				// err = v.CreateData(newdata)
-				// if err != nil {
-				// 	log.Printf("add data error")
-				// }
-				// v.DeleteData(newdata)
+                log.Printf("Received a message: %s", d.Body)
+
 				go func() {
-					currentTime := time.Now().Unix()
-					gen_id := utils.GeneratorId()
-					newdata := &model.Build{
-						ID:      gen_id,
-						Service: service,
-						Data:    string(d.Body),
-						//Status: model.StatusPending,
-						Status:     model.StatusRunning,
-						Timestamp:  currentTime,
-						Timestamp2: int64(0),
-					}
-					err = v.CreateBuild(newdata)
-					if err != nil {
-						log.Printf("add data error")
-					}
-					status := task_pipeline.Pipeline(data, d.Body)
-					currentTime = time.Now().Unix()
-					newdata.Status = status
-					newdata.Timestamp2 = currentTime
-					err = v.UpdateBuild(newdata)
-					if err != nil {
-						log.Printf("add data error")
-					}
+					err := s.RunStep(d.Body)
+                    if err != nil {
+                        log.Printf("Pipeline step error: %s", err)
+                        d.Ack(false)
+                        return
+                    }
+
+                    d.Ack(true)
 				}()
 			}
 		}()
+
 		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
 		<-forever
 	}

@@ -79,12 +79,9 @@ func open(driver string) *gorm.DB {
 func setupDatabase(db *gorm.DB) error {
 	db.Set("gorm:table_options", "charset=utf8")
 	return db.AutoMigrate(&model.Schema{},
-			      &model.Service{},
 			      &model.Pipeline{},
 
 			      &model.Build{},
 			      &model.LogData{},
-			      &model.Proc{},
-			      &model.Task{}).Error
+			      &model.Proc{}).Error
 }
-

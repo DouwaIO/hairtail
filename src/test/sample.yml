@@ -1,6 +1,18 @@
 ---
 version: v1
 kind: pipeline
+
+services:
+  - name: testMQ
+    type: MQ
+    settings:
+      protocol: amqp
+      host: 47.97.182.182:32222
+      user: root
+      pwd: !!str 123456
+      topic: hello
+      ackPolicy: immediate
+
 steps:
   - name: even
     type: even
@@ -27,16 +39,3 @@ steps:
       target: quantity
       compute: +
       ignore: false
----
-version: v1
-kind: service
-services:
-  - name: testMQ
-    type: MQ
-    settings:
-      protocol: amqp
-      host: 47.97.182.182:32222
-      user: root
-      pwd: !!str 123456
-      topic: hello
-      ackPolicy: immediate

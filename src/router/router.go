@@ -7,7 +7,7 @@ import (
     "github.com/gin-gonic/gin"
 
 	"github.com/DouwaIO/hairtail/src/router/middleware/param_valid"
-	"github.com/DouwaIO/hairtail/src/server"
+	"github.com/DouwaIO/hairtail/src/api"
 )
 
 // Load loads the router
@@ -33,21 +33,21 @@ func Load(middleware ...gin.HandlerFunc) http.Handler {
 	// r.GET("/api/info", server.Info)
 	// r.GET("/api/builds", server.GetBuilds)
 
-    workflows := r.Group("/api/workflows/")
+    pipelines := r.Group("/api/pipelines/")
 	{
-		workflows.GET("", server.GetWorkflows)
-		workflows.POST("", server.CreateWorkflow)
+		pipelines.GET("", server.GetPipelines)
+		pipelines.POST("", server.CreatePipeline)
 	}
 
-    workflow := r.Group("/api/workflow/")
-	workflow.Use(param_valid.Check([]string{"workflow_id"}))
+    pipeline := r.Group("/api/pipeline/")
+	pipeline.Use(param_valid.Check([]string{"pipeline_id"}))
 	{
-		workflow.GET("", server.GetWorkflow)
-		workflow.PUT("", server.UpdateWorkflow)
-		workflow.DELETE("", server.DeleteWorkflow)
+		pipeline.GET("", server.GetPipeline)
+		pipeline.PUT("", server.UpdatePipeline)
+		pipeline.DELETE("", server.DeletePipeline)
 
-		workflow.PUT("open/", server.OpenWorkflow)
-		workflow.PUT("close/", server.CloseWorkflow)
+		pipeline.PUT("open/", server.OpenPipeline)
+		pipeline.PUT("close/", server.ClosePipeline)
 	}
 
 	return r
