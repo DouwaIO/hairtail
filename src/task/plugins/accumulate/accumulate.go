@@ -1,27 +1,32 @@
-package task
+package accumulate
 
 import (
 	"fmt"
-	// "github.com/DouwaIO/hairtail/src/schema"
-	"encoding/json"
-	"github.com/DouwaIO/hairtail/src/model"
-	// "github.com/DouwaIO/hairtail/src/store/datastore"
-	"github.com/jinzhu/gorm"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"time"
 	"log"
 	"strconv"
 	"strings"
 	//"errors"
+	"encoding/json"
+
+	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+
+	// "github.com/DouwaIO/hairtail/src/schema"
+	"github.com/DouwaIO/hairtail/src/model"
+	// "github.com/DouwaIO/hairtail/src/store/datastore"
 	"github.com/DouwaIO/hairtail/src/utils"
-	"time"
+	"github.com/DouwaIO/hairtail/src/task"
 )
 
-var loop_num int
-var end int64
 
-// var db *gorm.DB
+type Plugin struct {
+    loop_num int
+    end int64
+}
 
-func Accumulate(data []byte, params map[string]interface{}) {
+// func Accumulate(data []byte, params map[string]interface{}) {
+func (p *Plugin) Run(params *task.Params) (*task.Result, error) {
 	log.Println("Accumulate")
 
 	start := time.Now().Unix()
@@ -29,17 +34,17 @@ func Accumulate(data []byte, params map[string]interface{}) {
 	start += 1
 
 	var list_data []interface{}
-	err := json.Unmarshal(data, &list_data)
+	err := json.Unmarshal(params.Data, &list_data)
 	if err != nil {
 		log.Printf("%s", err)
 		//return err
 	}
 
-	setting_map := params["map"]
-	source := params["source"]
-	target := params["target"]
-	compute := params["compute"]
-	ignore := params["ignore"]
+	setting_map := params.Settings["map"]
+	source := params.Settings["source"]
+	target := params.Settings["target"]
+	compute := params.Settings["compute"]
+	ignore := params.Settings["ignore"]
 
 	map_map := make(map[string]string)
 
@@ -150,7 +155,7 @@ func Accumulate(data []byte, params map[string]interface{}) {
 				tx.Rollback()
 				log.Printf("%s,rollback", err)
 				//return err
-				return
+				return nil, err
 			}
 
 		} else {
@@ -173,7 +178,7 @@ func Accumulate(data []byte, params map[string]interface{}) {
 				if err != nil {
 					tx.Rollback()
 					log.Printf("%s, rollback", err)
-					return
+					return nil, err
 					//return err
 				}
 			}
@@ -181,11 +186,11 @@ func Accumulate(data []byte, params map[string]interface{}) {
 		}
 	}
 
-	loop_num += 1
-	fmt.Println("loop_num is ", loop_num)
+	p.loop_num += 1
+	fmt.Println("loop_num is ", p.loop_num)
 
-	end := time.Now().Unix()
-	fmt.Println("end is ", end)
+	p.end = time.Now().Unix()
+	fmt.Println("end is ", p.end)
 
 	tx.Commit()
 	err = db.Close()
@@ -193,7 +198,5 @@ func Accumulate(data []byte, params map[string]interface{}) {
 		log.Println(err)
 	}
 
-	//return nil, "success"
-
-	//return nil
+	return nil, nil
 }

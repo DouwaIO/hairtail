@@ -1,21 +1,20 @@
 package service
 
 import (
-	yaml "github.com/DouwaIO/hairtail/src/yaml/pipeline"
-	"github.com/DouwaIO/hairtail/src/store"
 	"github.com/DouwaIO/hairtail/src/pipeline"
+	"github.com/DouwaIO/hairtail/src/store"
+	yaml "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 )
 
 type Service struct {
-	Name          string
-	Desc          string
-	Type          string
-	Settings      map[string]interface{}
-    Steps         []*yaml.Task
-    // database store
-    Store         *store.Store
+	Name     string
+	Desc     string
+	Type     string
+	Settings map[string]interface{}
+	Steps    []*yaml.Task
+	// database store
+	Store *store.Store
 }
-
 
 func (s *Service) Run() error {
 	if s.Type == "MQ" {
@@ -49,10 +48,10 @@ func (s *Service) RunStep(data []byte) error {
 	// 	log.Printf("add data error")
 	// }
 
-    p := pipeline.Pipeline{
-        Tasks:  s.Steps,
-    }
+	p := pipeline.Pipeline{
+		Tasks: s.Steps,
+	}
 
-    _, err := p.Run(data)
-    return err
+	_, err := p.Run(data)
+	return err
 }

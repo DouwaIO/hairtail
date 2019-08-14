@@ -1,13 +1,18 @@
-package task
+package selec
 
 import (
 	"encoding/json"
 	"log"
 	"strings"
 	"time"
+
+	"github.com/DouwaIO/hairtail/src/task"
 )
 
-func Select(data []byte, params map[string]interface{}) ([]byte, string) {
+type Plugin struct {}
+
+// func Select(data []byte, params map[string]interface{}) ([]byte, string) {
+func (p *Plugin) Run(params *task.Params) (*task.Result, error) {
 	log.Println("SelectData")
 
 	start := time.Now().Unix()
@@ -16,15 +21,15 @@ func Select(data []byte, params map[string]interface{}) ([]byte, string) {
 
 	// log.Println("data is %s",string(data))
 	var list_data []map[string]interface{}
-	err := json.Unmarshal(data, &list_data)
+	err := json.Unmarshal(params.Data, &list_data)
 	if err != nil {
 		log.Printf("%s", err)
-		return nil, "error"
+		return nil, err
 	}
 
-	include := params["include"]
-	exclude := params["exclude"]
-	rename := params["rename"]
+	include := params.Settings["include"]
+	exclude := params.Settings["exclude"]
+	rename := params.Settings["rename"]
 
 	// fmt.Println(len(include.([]interface{})))
 	// 将[a = b, c = d] 转换为 {"a":"b","c":"d"}
@@ -70,6 +75,8 @@ func Select(data []byte, params map[string]interface{}) ([]byte, string) {
 	}
 
 	res_byte, _ := json.Marshal(res_list)
-	return res_byte, "success"
-	// return nil
+    result := task.Result{
+        Data: res_byte,
+    }
+	return &result, nil
 }
