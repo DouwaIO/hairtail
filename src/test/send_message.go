@@ -1,10 +1,10 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"log"
 	"time"
-	"fmt"
-	"encoding/json"
 
 	"github.com/streadway/amqp"
 )
@@ -16,14 +16,14 @@ func failOnError(err error, msg string) {
 }
 
 type Detail struct {
-    FabricNo string `json:"fabric_no"`
-    Line string `json:"line"`
-    Quantity int `json:"quantity"`
+	FabricNo string `json:"fabric_no"`
+	Line     string `json:"line"`
+	Quantity int    `json:"quantity"`
 }
 
 type Bill struct {
-    BillNo string `json:"bill_no"`
-    Details []*Detail `json:"details"`
+	BillNo  string    `json:"bill_no"`
+	Details []*Detail `json:"details"`
 }
 
 // 只能在安装 rabbitmq 的服务器上操作
@@ -49,22 +49,22 @@ func main() {
 	start := time.Now().Unix()
 	log.Println("start is ", start)
 
-	for i := 1; i <= 1; i++ {
-        var details []*Detail
-        for j := 1; j <= 10; j++ {
-            detail := &Detail{
-                FabricNo: fmt.Sprintf("f%d", j),
-                Line: fmt.Sprintf("l%d", j),
-                Quantity: j,
-            }
-            details = append(details, detail)
-        }
-        bill := Bill{
-            BillNo: fmt.Sprintf("b%d", i),
-            Details: details,
-        }
-        body, _ := json.Marshal(bill)
-        log.Printf("No. %d\nBody: %s\n", i, body)
+	for i := 1; i <= 10; i++ {
+		var details []*Detail
+		for j := 1; j <= 10; j++ {
+			detail := &Detail{
+				FabricNo: fmt.Sprintf("f%d", j),
+				Line:     fmt.Sprintf("l%d", j),
+				Quantity: j,
+			}
+			details = append(details, detail)
+		}
+		bill := Bill{
+			BillNo:  fmt.Sprintf("b%d", i),
+			Details: details,
+		}
+		body, _ := json.Marshal(bill)
+		log.Printf("No. %d\nBody: %s\n", i, body)
 
 		err = ch.Publish(
 			"",     // exchange

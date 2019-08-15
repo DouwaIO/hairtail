@@ -31,10 +31,10 @@ func Accumulate(params *Params) (*Result, error) {
 	db := params.DB
 
 	var r2 map[string]interface{}
-	for i := 0; i < len(d1); i++ {
+	for _, r1i := range d1 {
 		// log.Debugf("start deal")
 
-		r1 := d1[i].(map[string]interface{})
+		r1 := r1i.(map[string]interface{})
 		// log.Debugf("r1: %s", r1)
 
 		key := ""
@@ -59,6 +59,7 @@ func Accumulate(params *Params) (*Result, error) {
 			key += fmt.Sprintf("%s=%s,", f1, v1s)
 		}
 		key = strings.TrimRight(key, ",")
+		// log.Debugf("key: %s", key)
 
 		var d2 = new(model.RemoteData)
 		err := db.Where("key = ?", key).First(&d2).Error
