@@ -22049,7 +22049,7 @@ func main() {
             "bill_type_name": "采购入库"
         }
     }`
-    for i := 0; i<100; i++{
+    for i := 0; i<1; i++{
         err = ch.Publish(
             "",     // exchange
             q.Name, // routing key
@@ -22064,16 +22064,4 @@ func main() {
         failOnError(err, "Failed to publish a message")
         log.Println("send success")
     } 
-    // err = ch.Publish(
-    //     "",     // exchange
-    //     q.Name, // routing key
-    //     false,  // mandatory
-    //     false,  // immediate
-    //     amqp.Publishing{
-    //         ContentType: "text/plain",
-    //         Body:        []byte(body),
-            
-    //     })
-    // log.Printf(" [x] Sent %s", body)
-    // failOnError(err, "Failed to publish a message")
 }
