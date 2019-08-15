@@ -85,7 +85,7 @@ func MQ(s *Service) error {
 			}
 		}()
 
-		log.Info(" [*] Waiting for messages.")
+		log.Info("MQ waiting for messages.")
 		<-forever
 	}
 	return nil

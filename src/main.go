@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/urfave/cli"
+	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/DouwaIO/hairtail/src/router"
@@ -13,6 +14,7 @@ import (
 	"github.com/DouwaIO/hairtail/src/service"
 	"github.com/DouwaIO/hairtail/src/store/datastore"
 	yaml "github.com/DouwaIO/hairtail/src/yaml/pipeline"
+	"github.com/DouwaIO/hairtail/src/model"
 )
 
 func main() {
@@ -23,7 +25,7 @@ func main() {
 	app.Action = run
 	// app.Before = before
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{
+		cli.BoolTFlag{
 			EnvVar: "HTAIL_DEBUG",
 			Name:   "debug",
 			Usage:  "enable server debug mode",
@@ -42,7 +44,13 @@ func main() {
 		cli.StringFlag{
 			EnvVar: "HTAIL_DB_URL",
 			Name:   "db-url",
-			Usage:  "server address",
+			Usage:  "database url",
+			Value:  "host=47.110.154.127 port=30172 user=postgres dbname=hairtail sslmode=disable password=huansi@2017",
+		},
+		cli.StringFlag{
+			EnvVar: "HTAIL_TARGET_DB_URL",
+			Name:   "target-db-url",
+			Usage:  "target database url",
 			Value:  "host=47.110.154.127 port=30172 user=postgres dbname=hairtail sslmode=disable password=huansi@2017",
 		},
 	}
@@ -54,20 +62,36 @@ func main() {
 }
 
 func run(c *cli.Context) error {
-    // debug level if requested by user
-    if c.Bool("debug") {
-        log.SetLevel(log.DebugLevel)
-    }
+	log.SetFormatter(&log.TextFormatter{
+		FullTimestamp: true,
+	})
+
+	// debug level if requested by user
+	if c.Bool("debug") {
+		log.SetLevel(log.DebugLevel)
+	}
 
 	store_ := datastore.New(
 		c.String("db-url"),
 	)
-	// pipeline.Queue = model.WithTaskStore(queue.New(), store_)
 
 	handler := router.Load(
 		middleware.Store(c, store_),
 		//middleware.Task(c, store_),
 	)
+
+	targetDB, err := gorm.Open("postgres", c.String("target-db-url"))
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Error("Target db connect failed")
+		return err
+	}
+	log.Info("Target database connected")
+
+	err = targetDB.AutoMigrate(&model.RemoteData{},).Error
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Error("db auto migrate error")
+		return err
+	}
 
 	//启动数据库里面的service
 	pipelines, _ := store_.GetPipelines("")
@@ -79,8 +103,7 @@ func run(c *cli.Context) error {
 		}
 
 		for _, s := range parsed.Services {
-			log.Debugf("run service:", s.Name)
-
+			log.Debugf("run service:", string(s.Name))
 			svc := service.Service{
 				Name:     s.Name,
 				Desc:     s.Desc,
@@ -88,8 +111,9 @@ func run(c *cli.Context) error {
 				Settings: s.Settings,
 				Steps:    parsed.Steps,
 				Store:    &store_,
+				TargetDB: targetDB,
 			}
-			err := svc.Run()
+			err = svc.Run()
 			if err != nil {
 				return nil
 			}

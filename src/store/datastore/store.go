@@ -1,29 +1,12 @@
-// Copyright 2018 Drone.IO Inc.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 package datastore
 
 import (
-	// "os"
-
-	"github.com/DouwaIO/hairtail/src/store"
-
-	"github.com/DouwaIO/hairtail/src/model"
-
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
+
+	"github.com/DouwaIO/hairtail/src/store"
+	"github.com/DouwaIO/hairtail/src/model"
 )
 
 var db *gorm.DB
@@ -61,15 +44,13 @@ func open(driver string) *gorm.DB {
 	// os.Getenv("DRONE_DATABASE_DATASOURCE")
 	//DRONE_DATABASE_DATASOURCE := driver
 	db,err := gorm.Open("postgres", driver)
-		if err != nil {
-			logrus.Errorln(err)
-			logrus.Fatalln("database ping attempts failed")
-		}
-		logrus.Infof("连接成功了")
-		if err := setupDatabase(db); err != nil {
-			logrus.Errorln(err)
-			logrus.Fatalln("migration failed")
-		}
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Error("database ping attempts failed")
+	}
+	log.Infof("database connected")
+	if err := setupDatabase(db); err != nil {
+		log.WithFields(log.Fields{"error": err}).Error("migration failed")
+	}
 	return db
 }
 
@@ -79,9 +60,8 @@ func open(driver string) *gorm.DB {
 func setupDatabase(db *gorm.DB) error {
 	db.Set("gorm:table_options", "charset=utf8")
 	return db.AutoMigrate(&model.Schema{},
-			      &model.Pipeline{},
-
-			      &model.Build{},
-			      &model.LogData{},
-			      &model.Proc{}).Error
+			&model.Pipeline{},
+			&model.Build{},
+			&model.LogData{},
+			&model.Proc{}).Error
 }

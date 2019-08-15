@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 
 	"github.com/DouwaIO/hairtail/src/pipeline"
@@ -15,7 +16,9 @@ type Service struct {
 	Settings map[string]interface{}
 	Steps    []*yaml.Task
 	// database store
-	Store *store.Store
+	Store    *store.Store
+	// target database
+	TargetDB	*gorm.DB
 }
 
 func (s *Service) Run() error {
@@ -38,6 +41,7 @@ func (s *Service) RunStep(data []byte) error {
 
 	go func() {
 		p := pipeline.Pipeline{
+			TargetDB: s.TargetDB,
 			Tasks: s.Steps,
 		}
 

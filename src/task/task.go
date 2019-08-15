@@ -21,6 +21,7 @@ type Result struct {
 }
 
 type Plugin struct {
+	TargetDB  *gorm.DB
 	Type	string
 	Settings map[string]interface{}
 }
@@ -39,20 +40,7 @@ func (p *Plugin) Run(data []byte) (*Result, error) {
     case "select":
 		return Select(&params)
     case "accumulate":
-		// db, err := gorm.Open("postgres", "host=47.110.154.127 port=30011 user=postgres dbname=postgres sslmode=disable password=huansi@2017")
-		db, err := gorm.Open("postgres", "host=47.110.154.127 port=30172 user=postgres dbname=hairtail sslmode=disable password=huansi@2017")
-		if err != nil {
-			log.Errorf("Pipeline run task error: %s", err)
-			return nil, err
-		}
-
-		// err = db.AutoMigrate(&model.RemoteData{},).Error
-		// if err != nil {
-		// 	log.Errorf("db auto migrate error: %s", err)
-		// 	return nil, err
-		// }
-
-		tx := db.Begin()
+		tx := p.TargetDB.Begin()
 		params.DB = tx
 		result, err := Accumulate(&params)
 		if err != nil {
@@ -61,8 +49,6 @@ func (p *Plugin) Run(data []byte) (*Result, error) {
 			return nil, err
 		}
 		tx.Commit()
-		db.Close()
-
 		return result, nil
     }
     return nil, errors.New("plugin not fonded")
