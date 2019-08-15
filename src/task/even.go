@@ -1,18 +1,11 @@
-package even
+package task
 
 import (
 	"fmt"
-	"log"
 	"encoding/json"
-
-	"github.com/DouwaIO/hairtail/src/task"
 )
 
-type Plugin struct {}
-
-func (p *Plugin) Run(params *task.Params) (*task.Result, error) {
-	log.Println("SplitData")
-
+func Even(params *Params) (*Result, error) {
 	myMap := make(map[string]interface{})
 	json.Unmarshal(params.Data, &myMap)
 	output_dict := make(map[string]interface{})
@@ -29,7 +22,7 @@ func (p *Plugin) Run(params *task.Params) (*task.Result, error) {
 	}
 
 	data2, _ := json.Marshal(list_data)
-    result := task.Result{
+    result := Result{
         Data: data2,
     }
 	return &result, nil

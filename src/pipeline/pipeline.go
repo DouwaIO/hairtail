@@ -1,18 +1,13 @@
 package pipeline
 
 import (
-	"context"
-	"fmt"
-	"log"
+	log "github.com/sirupsen/logrus"
 
-	"github.com/DouwaIO/hairtail/src/model"
+	// "github.com/DouwaIO/hairtail/src/model"
 	"github.com/DouwaIO/hairtail/src/pipeline/queue"
-	"github.com/DouwaIO/hairtail/src/utils"
+	// "github.com/DouwaIO/hairtail/src/utils"
 	yaml "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	"github.com/DouwaIO/hairtail/src/task"
-	"github.com/DouwaIO/hairtail/src/task/plugins/even"
-	"github.com/DouwaIO/hairtail/src/task/plugins/selec"
-	"github.com/DouwaIO/hairtail/src/task/plugins/accumulate"
 )
 
 type Pipeline struct {
@@ -21,54 +16,44 @@ type Pipeline struct {
 
 var Queue queue.Queue
 
-func (p *Pipeline) Run(data []byte) (string, error) {
-	//parsed, err := yaml.ParseString(q.config)
-	//if err != nil {
-	//	return errors.New("yaml type error")
-	//}
-	log.Printf("hello world")
-	ctx := context.Background()
-	gen_id := utils.GeneratorId()
-	task2 := &queue.Task{
-		ID:   gen_id,
-		Data: data,
-	}
-	Queue.Push(ctx, task2)
-	fn, err := queue.CreateFilterFunc("filter")
-	if err != nil {
-		fmt.Println("s", err)
-	}
-	Queue.Poll(ctx, fn, gen_id)
-	// log.Printf("poll: %s\n", Queue.Info(ctx))
+func (p *Pipeline) Run(data []byte) error {
+	log.Info("Pipeline running...")
 
-	if len(p.Tasks) > 0 {
-		for _, t := range p.Tasks {
-            tk := GetTaskPlugin(t)
-            params := task.Params{
-                Settings: t.Settings,
-                Data:     data,
-            }
-			result, err := tk.Run(&params)
-			if err != nil {
-				fmt.Printf("task run error: %s\n", err)
-			}
+	// ctx := context.Background()
+	// gen_id := utils.GeneratorId()
+	// task2 := &queue.Task{
+	// 	ID:   gen_id,
+	// 	Data: data,
+	// }
+	// Queue.Push(ctx, task2)
+	// fn, err := queue.CreateFilterFunc("filter")
+	// if err != nil {
+	// 	fmt.Println("s", err)
+	// }
+	// Queue.Poll(ctx, fn, gen_id)
+
+	for _, t := range p.Tasks {
+		log.Debugf("Pipeline run task: %s (%s)", t.Name, t.Type)
+
+        tk := task.Plugin{
+			Type: t.Type,
+            Settings: t.Settings,
+        }
+		result, err := tk.Run(data)
+		if err != nil {
+			log.Errorf("Pipeline run task error: %s", err)
+			return err
+		}
+		// log.Debugf("Pipeline task result: %s", result)
+
+		if result != nil && result.Data != nil {
 			data = result.Data
 		}
-	}
-	Queue.Done(ctx, gen_id)
-	log.Printf("done: %s\n", Queue.Info(ctx))
-	return model.StatusSuccess, nil
-}
 
-func GetTaskPlugin(t *yaml.Task) task.Plugin {
-    var tk task.Plugin
-    switch t.Type {
-    case "even":
-        tk = new(even.Plugin)
-    case "select":
-        tk = new(selec.Plugin)
-    case "accumulate":
-        tk = new(accumulate.Plugin)
-    }
-    return tk
+		log.Debugf("    task ending...")
+	}
+	// Queue.Done(ctx, gen_id)
+	// log.Debugf("done: %s\n", Queue.Info(ctx))
+	log.Info("Pipeline ended")
+	return nil
 }

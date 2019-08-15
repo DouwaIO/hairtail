@@ -1,29 +1,18 @@
-package selec
+package task
 
 import (
 	"encoding/json"
-	"log"
 	"strings"
-	"time"
 
-	"github.com/DouwaIO/hairtail/src/task"
+	log "github.com/sirupsen/logrus"
 )
 
-type Plugin struct {}
-
-// func Select(data []byte, params map[string]interface{}) ([]byte, string) {
-func (p *Plugin) Run(params *task.Params) (*task.Result, error) {
-	log.Println("SelectData")
-
-	start := time.Now().Unix()
-	log.Println("select start is ", start)
-	start += 1
-
+func Select(params *Params) (*Result, error) {
 	// log.Println("data is %s",string(data))
 	var list_data []map[string]interface{}
 	err := json.Unmarshal(params.Data, &list_data)
 	if err != nil {
-		log.Printf("%s", err)
+		log.Errorf("Task select unmarshal data error: %s", err)
 		return nil, err
 	}
 
@@ -75,7 +64,7 @@ func (p *Plugin) Run(params *task.Params) (*task.Result, error) {
 	}
 
 	res_byte, _ := json.Marshal(res_list)
-    result := task.Result{
+    result := Result{
         Data: res_byte,
     }
 	return &result, nil

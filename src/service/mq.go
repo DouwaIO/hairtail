@@ -1,48 +1,53 @@
 package service
 
 import (
-	"log"
 	"fmt"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/streadway/amqp"
 )
 
 // func MQ(protocol, host, user, pwd, topic, ackPolicy string, data []*pipeline.Task, service string, v store.Store) error {
 func MQ(s *Service) error {
-    consumerName := ""
-    protocol := s.Settings["protocol"].(string)
-    topic := s.Settings["topic"].(string)
-    // ackPolicy := settings["ackPolicy"].(string)
+	consumerName := ""
+	protocol := s.Settings["protocol"].(string)
+	topic := s.Settings["topic"].(string)
+	// ackPolicy := settings["ackPolicy"].(string)
 
-    connectStr := fmt.Sprintf("%s://%s:%s@%s/",
-        protocol,
-        s.Settings["user"].(string),
-        s.Settings["pwd"].(string),
-        s.Settings["host"].(string))
+	connectStr := fmt.Sprintf("%s://%s:%s@%s/",
+		protocol,
+		s.Settings["user"].(string),
+		s.Settings["pwd"].(string),
+		s.Settings["host"].(string))
 
+	log.Debugf("MQ protocal: %s", protocol)
 	if protocol == "amqp" {
 		conn, err := amqp.Dial(connectStr)
 		if err != nil {
+			log.Errorf("MQ connect error: %s", err)
 			return err
 		}
 		defer conn.Close()
 
 		ch, err := conn.Channel()
 		if err != nil {
+			log.Errorf("MQ get channel error: %s", err)
 			return err
 		}
 		defer ch.Close()
 
 		q, err := ch.QueueDeclare(
 			topic, // name
-			true,  // durable
+			false, // durable
+			// true,  // durable
 			false, // delete when unused
 			false, // exclusive
 			false, // no-wait
 			nil,   // arguments
 		)
 		if err != nil {
-            // Failed to declare a queue
+			log.Errorf("MQ decalre queue error: %s", err)
 			return err
 		}
 
@@ -56,29 +61,31 @@ func MQ(s *Service) error {
 			nil,          // args
 		)
 		if err != nil {
-            // Failed to register a consumer
+			log.Errorf("MQ get consume error: %s", err)
 			return err
 		}
+		log.Debugf("MQ service starting...")
 
 		forever := make(chan bool)
 		go func() {
 			for d := range msgs {
-                log.Printf("Received a message: %s", d.Body)
+				log.Debugf("Received a message: %s", d.Body)
 
 				go func() {
+					log.Debugf("go to pipeline")
 					err := s.RunStep(d.Body)
-                    if err != nil {
-                        log.Printf("Pipeline step error: %s", err)
-                        d.Ack(false)
-                        return
-                    }
+					if err != nil {
+						log.Errorf("Pipeline step error: %s", err)
+						d.Ack(false)
+						return
+					}
 
-                    d.Ack(true)
+					d.Ack(true)
 				}()
 			}
 		}()
 
-		log.Printf(" [*] Waiting for messages. To exit press CTRL+C")
+		log.Info(" [*] Waiting for messages.")
 		<-forever
 	}
 	return nil

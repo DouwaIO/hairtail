@@ -2,23 +2,17 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 
 	"github.com/urfave/cli"
+	log "github.com/sirupsen/logrus"
 
 	"github.com/DouwaIO/hairtail/src/router"
 	"github.com/DouwaIO/hairtail/src/router/middleware"
 	"github.com/DouwaIO/hairtail/src/service"
-	// "github.com/DouwaIO/hairtail/src/store"
 	"github.com/DouwaIO/hairtail/src/store/datastore"
-	// "github.com/DouwaIO/hairtail/src/task"
-	// "github.com/DouwaIO/hairtail/src/task/plugins/even"
 	yaml "github.com/DouwaIO/hairtail/src/yaml/pipeline"
-	// "github.com/DouwaIO/hairtail/src/model"
-	// "github.com/DouwaIO/hairtail/src/pipeline"
-	// "github.com/DouwaIO/hairtail/src/pipeline/queue"
 )
 
 func main() {
@@ -29,7 +23,7 @@ func main() {
 	app.Action = run
 	// app.Before = before
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{
+		cli.BoolTFlag{
 			EnvVar: "HTAIL_DEBUG",
 			Name:   "debug",
 			Usage:  "enable server debug mode",
@@ -60,10 +54,11 @@ func main() {
 }
 
 func run(c *cli.Context) error {
-	// debug level if requested by user
-	//if c.Bool("debug") {
-	//} else {
-	//}
+    // debug level if requested by user
+    if c.Bool("debug") {
+        log.SetLevel(log.DebugLevel)
+    }
+
 	store_ := datastore.New(
 		c.String("db-url"),
 	)
@@ -77,28 +72,26 @@ func run(c *cli.Context) error {
 	//启动数据库里面的service
 	pipelines, _ := store_.GetPipelines("")
 	for _, pl := range pipelines {
-		log.Printf("start pipeline: %s", pl.Name)
+		log.Debugf("start pipeline: %s", pl.Name)
 		parsed, err := yaml.ParseString(pl.Config)
 		if err != nil {
 			return nil
 		}
 
 		for _, s := range parsed.Services {
-			if s.Type == "MQ" {
-				log.Printf("run service:", s.Name)
+			log.Debugf("run service:", s.Name)
 
-				svc := service.Service{
-					Name:     s.Name,
-					Desc:     s.Desc,
-					Type:     s.Type,
-					Settings: s.Settings,
-					Steps:    parsed.Steps,
-					Store:    &store_,
-				}
-				err := svc.Run()
-				if err != nil {
-					return nil
-				}
+			svc := service.Service{
+				Name:     s.Name,
+				Desc:     s.Desc,
+				Type:     s.Type,
+				Settings: s.Settings,
+				Steps:    parsed.Steps,
+				Store:    &store_,
+			}
+			err := svc.Run()
+			if err != nil {
+				return nil
 			}
 		}
 	}
