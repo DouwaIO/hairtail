@@ -35,14 +35,13 @@ func (p *Pipeline) Run(data []byte) error {
 	// Queue.Poll(ctx, fn, gen_id)
 
 	for _, t := range p.Tasks {
-		log.Debugf("Pipeline run task: %s (%s)", t.Name, t.Type)
-
 		tk := task.Plugin{
 			TargetDB: p.TargetDB,
 			Type:     t.Type,
 			Settings: t.Settings,
 		}
 		result, err := tk.Run(data)
+		log.Debugf("Task end")
 		if err != nil {
 			log.Errorf("Pipeline run task error: %s", err)
 			return err
@@ -52,11 +51,8 @@ func (p *Pipeline) Run(data []byte) error {
 		if result != nil && result.Data != nil {
 			data = result.Data
 		}
-
-		log.Debugf("    task ending...")
 	}
 	// Queue.Done(ctx, gen_id)
 	// log.Debugf("done: %s\n", Queue.Info(ctx))
-	log.Info("Pipeline ended")
 	return nil
 }

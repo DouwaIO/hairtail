@@ -22,7 +22,7 @@ type Service struct {
 }
 
 func (s *Service) Run() error {
-    log.Debugf("Service Run for: %s", s.Type)
+	log.WithFields(log.Fields{"type": s.Type}).Debug("Service running..")
 	if s.Type == "mq" {
 		go MQ(s)
 	} else if s.Type == "db" {
@@ -35,10 +35,6 @@ func (s *Service) Run() error {
 func (s *Service) RunStep(data []byte) error {
 	log.Debugf("Service run step")
 
-	// currentTime = time.Now().Unix()
-	// newdata.Status = status
-	// newdata.Timestamp2 = currentTime
-
 	go func() {
 		p := pipeline.Pipeline{
 			TargetDB: s.TargetDB,
@@ -46,6 +42,7 @@ func (s *Service) RunStep(data []byte) error {
 		}
 
 		_ = p.Run(data)
+		log.Debugf("Pipeline end")
 	}()
 
 	return nil

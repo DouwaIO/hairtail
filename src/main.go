@@ -85,6 +85,7 @@ func run(c *cli.Context) error {
 		log.WithFields(log.Fields{"error": err}).Error("Target db connect failed")
 		return err
 	}
+	defer targetDB.Close()
 	log.Info("Target database connected")
 
 	err = targetDB.AutoMigrate(&model.RemoteData{},).Error
@@ -96,14 +97,14 @@ func run(c *cli.Context) error {
 	//启动数据库里面的service
 	pipelines, _ := store_.GetPipelines("")
 	for _, pl := range pipelines {
-		log.Debugf("start pipeline: %s", pl.Name)
+		log.WithFields(log.Fields{"name": pl.Name}).Debug("start pipeline")
 		parsed, err := yaml.ParseString(pl.Config)
 		if err != nil {
 			return nil
 		}
 
 		for _, s := range parsed.Services {
-			log.Debugf("run service:", string(s.Name))
+			// log.WithFields(log.Fields{"name": s.Name}).Debug("run service")
 			svc := service.Service{
 				Name:     s.Name,
 				Desc:     s.Desc,

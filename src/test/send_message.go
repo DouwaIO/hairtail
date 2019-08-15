@@ -1,15 +1,29 @@
 package main
 
 import (
-	"github.com/streadway/amqp"
 	"log"
 	"time"
+	"fmt"
+	"encoding/json"
+
+	"github.com/streadway/amqp"
 )
 
 func failOnError(err error, msg string) {
 	if err != nil {
 		log.Fatalf("%s: %s", msg, err)
 	}
+}
+
+type Detail struct {
+    FabricNo string `json:"fabric_no"`
+    Line string `json:"line"`
+    Quantity int `json:"quantity"`
+}
+
+type Bill struct {
+    BillNo string `json:"bill_no"`
+    Details []*Detail `json:"details"`
 }
 
 // 只能在安装 rabbitmq 的服务器上操作
@@ -35,87 +49,23 @@ func main() {
 	start := time.Now().Unix()
 	log.Println("start is ", start)
 
-	body := `{
-        "name": "fabric_stock_in",
-        "type": "add",
-        "key": "F000323546",
-        "time": "2019-04-30T07:33:13.161Z",
-        "data": {
-            "bill_no": "string",
-            "bill_date": "2018-03-03",
-            "ops_time": "2019-04-30T07:33:13.161Z",
-            "details": [{
-                "fabric_no": "string1",
-                "line": "ASDF",
-                "model_no": "83234358",
-                "model_name": "string",
-                "item_no": "23234543",
-                "item_name": "string",
-                "quantity": 1,
-                "unit_name": "m",
-                "order_no": "string",
-                "order_date": "2018-02-10",
-                "customer_code": "string",
-                "customer_name": "string",
-                "order_delivery_date": "2018-03-20",
-                "order_quantity": 0,
-                "width": 0,
-                "gmwt": 0,
-                "card_no": "string",
-                "lot_no": "string",
-                "sequence_no": "string",
-                "grade": "string",
-                "location_no": "string"
-            }, {
-                "fabric_no": "string2",
-                "line": "ASDF",
-                "model_no": "83234358",
-                "model_name": "string",
-                "item_no": "23234543",
-                "item_name": "string",
-                "quantity": 1,
-                "unit_name": "m",
-                "order_no": "string",
-                "order_date": "2018-02-10",
-                "customer_code": "string",
-                "customer_name": "string",
-                "order_delivery_date": "2018-03-20",
-                "order_quantity": 0,
-                "width": 0,
-                "gmwt": 0,
-                "card_no": "string",
-                "lot_no": "string",
-                "sequence_no": "string",
-                "grade": "string",
-                "location_no": "string"
-            }, {
-                "fabric_no": "string3",
-                "line": "ASDF",
-                "model_no": "83234358",
-                "model_name": "string",
-                "item_no": "23234543",
-                "item_name": "string",
-                "quantity": 1,
-                "unit_name": "m",
-                "order_no": "string",
-                "order_date": "2018-02-10",
-                "customer_code": "string",
-                "customer_name": "string",
-                "order_delivery_date": "2018-03-20",
-                "order_quantity": 0,
-                "width": 0,
-                "gmwt": 0,
-                "card_no": "string",
-                "lot_no": "string",
-                "sequence_no": "string",
-                "grade": "string",
-                "location_no": "string"
-            }],
-            "bill_type_name": "采购入库"
+	for i := 1; i <= 1; i++ {
+        var details []*Detail
+        for j := 1; j <= 10; j++ {
+            detail := &Detail{
+                FabricNo: fmt.Sprintf("f%d", j),
+                Line: fmt.Sprintf("l%d", j),
+                Quantity: j,
+            }
+            details = append(details, detail)
         }
-    }`
-	max := 1
-	for i := 0; i < max; i++ {
+        bill := Bill{
+            BillNo: fmt.Sprintf("b%d", i),
+            Details: details,
+        }
+        body, _ := json.Marshal(bill)
+        log.Printf("No. %d\nBody: %s\n", i, body)
+
 		err = ch.Publish(
 			"",     // exchange
 			q.Name, // routing key
@@ -123,7 +73,7 @@ func main() {
 			false,  // immediate
 			amqp.Publishing{
 				ContentType: "text/plain",
-				Body:        []byte(body),
+				Body:        body,
 			})
 		failOnError(err, "Failed to publish a message")
 		log.Println("send success")
