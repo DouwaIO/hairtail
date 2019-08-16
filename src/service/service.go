@@ -33,17 +33,18 @@ func (s *Service) Run() error {
 }
 
 func (s *Service) RunStep(data []byte) error {
-	log.Debugf("Service run step")
+	log.Debugf("Service step running...")
 
-	go func() {
-		p := pipeline.Pipeline{
-			TargetDB: s.TargetDB,
-			Tasks: s.Steps,
-		}
+	p := pipeline.Pipeline{
+		TargetDB: s.TargetDB,
+		Tasks: s.Steps,
+	}
 
-		_ = p.Run(data)
-		log.Debugf("Pipeline end")
-	}()
+	err := p.Run(data)
+	if err != nil {
+		log.WithFields(log.Fields{"error": err}).Error("Service step end")
+		return err
+	}
 
 	return nil
 }

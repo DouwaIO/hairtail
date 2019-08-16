@@ -69,21 +69,19 @@ func MQ(s *Service) error {
 		forever := make(chan bool)
 		go func() {
 			for d := range msgs {
-				// log.Debugf("Received a message: %s", d.Body)
+				// log.Debugf("MQ received a message: %s", d.Body)
+				log.Debug("MQ received a new message")
 
-				go func() {
-					err := s.RunStep(d.Body)
-					if err != nil {
-						log.Errorf("Pipeline step error: %s", err)
-						d.Ack(false)
-						return
-					}
+				err := s.RunStep(d.Body)
+				if err != nil {
+					log.Errorf("Pipeline step error: %s", err)
+					d.Ack(false)
+					return
+				}
 
-					d.Ack(true)
-				}()
+				d.Ack(true)
 			}
 		}()
-
 		log.Info("MQ waiting for messages")
 		<-forever
 	}

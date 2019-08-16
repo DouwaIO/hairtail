@@ -41,7 +41,6 @@ func (p *Pipeline) Run(data []byte) error {
 			Settings: t.Settings,
 		}
 		result, err := tk.Run(data)
-		log.Debugf("Task end")
 		if err != nil {
 			log.Errorf("Pipeline run task error: %s", err)
 			return err
@@ -53,6 +52,6 @@ func (p *Pipeline) Run(data []byte) error {
 		}
 	}
 	// Queue.Done(ctx, gen_id)
-	// log.Debugf("done: %s\n", Queue.Info(ctx))
+	log.Info("Pipeline end")
 	return nil
 }
