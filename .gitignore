@@ -1,3 +1,6 @@
+htail
+hairtail
+
 dist/
 src/dist/
 *.sqlite

@@ -26,7 +26,7 @@ type Plugin struct {
 }
 
 func (p *Plugin) Run(data []byte) (*Result, error) {
-	log.WithFields(log.Fields{"type": p.Type}).Debug("Task running...")
+	log.WithFields(log.Fields{"type": p.Type}).Info("task running...")
 
 	params := Params{
 		Data:     data,
@@ -40,7 +40,6 @@ func (p *Plugin) Run(data []byte) (*Result, error) {
 		return Select(&params)
 	case "accumulate":
 		tx := p.TargetDB.Begin()
-		defer tx.Commit()
 
 		params.DB = tx
 		result, err := Accumulate(&params)
@@ -48,6 +47,8 @@ func (p *Plugin) Run(data []byte) (*Result, error) {
 			tx.Rollback()
 			return nil, err
 		}
+		tx.Commit()
+
 		return result, nil
 	}
 	return nil, errors.New("plugin not fonded")

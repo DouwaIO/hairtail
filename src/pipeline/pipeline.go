@@ -16,7 +16,7 @@ type Pipeline struct {
 }
 
 func (p *Pipeline) Run(data []byte) error {
-	log.Info("Pipeline running...")
+	log.Info("pipeline running...")
 
 	for _, t := range p.Tasks {
 		tk := task.Plugin{
@@ -26,8 +26,6 @@ func (p *Pipeline) Run(data []byte) error {
 		}
 		result, err := tk.Run(data)
 		if err != nil {
-			log.Errorf("Pipeline run task error: %s", err)
-			log.Info("Pipeline end")
 			return err
 		}
 
@@ -36,6 +34,6 @@ func (p *Pipeline) Run(data []byte) error {
 		}
 	}
 
-	log.Info("Pipeline end")
+	log.Info("pipeline ended")
 	return nil
 }

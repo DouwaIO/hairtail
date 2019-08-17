@@ -21,18 +21,18 @@ func MQ(s *Service) error {
 		s.Settings["pwd"].(string),
 		s.Settings["host"].(string))
 
-	log.Debugf("MQ protocal: %s", protocol)
+	log.Debugf("mq protocal: %s", protocol)
 	if protocol == "amqp" {
 		conn, err := amqp.Dial(connectStr)
 		if err != nil {
-			log.Errorf("MQ connect error: %s", err)
+			log.Errorf("mq connect error: %s", err)
 			return err
 		}
 		defer conn.Close()
 
 		ch, err := conn.Channel()
 		if err != nil {
-			log.Errorf("MQ get channel error: %s", err)
+			log.Errorf("mq get channel error: %s", err)
 			return err
 		}
 		defer ch.Close()
@@ -47,7 +47,7 @@ func MQ(s *Service) error {
 			nil,   // arguments
 		)
 		if err != nil {
-			log.Errorf("MQ decalre queue error: %s", err)
+			log.Errorf("mq decalre queue error: %s", err)
 			return err
 		}
 
@@ -61,28 +61,27 @@ func MQ(s *Service) error {
 			nil,          // args
 		)
 		if err != nil {
-			log.Errorf("MQ get consume error: %s", err)
+			log.Errorf("mq get consume error: %s", err)
 			return err
 		}
-		log.Debugf("MQ service starting...")
+		log.Infof("mq service connected")
 
 		forever := make(chan bool)
 		go func() {
 			for d := range msgs {
 				// log.Debugf("MQ received a message: %s", d.Body)
-				log.Debug("MQ received a new message")
+				log.Debug("mq received a new message")
 
 				err := s.RunPipeline(d.Body)
 				if err != nil {
-					log.Errorf("Pipeline step error: %s", err)
 					d.Ack(false)
-					return
+					continue
 				}
 
 				d.Ack(true)
 			}
 		}()
-		log.Info("MQ waiting for messages")
+		log.Debugf("mq waiting for messages")
 		<-forever
 	}
 	return nil

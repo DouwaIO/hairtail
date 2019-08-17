@@ -25,7 +25,7 @@ func main() {
 	app.Action = run
 	// app.Before = before
 	app.Flags = []cli.Flag{
-		cli.BoolTFlag{
+		cli.BoolFlag{
 			EnvVar: "HTAIL_DEBUG",
 			Name:   "debug",
 			Usage:  "enable server debug mode",
@@ -86,7 +86,7 @@ func run(c *cli.Context) error {
 		return err
 	}
 	defer targetDB.Close()
-	log.Info("Target database connected")
+	log.Info("target database connected")
 
 	err = targetDB.AutoMigrate(&model.RemoteData{},).Error
 	if err != nil {
@@ -97,11 +97,12 @@ func run(c *cli.Context) error {
 	//启动数据库里面的service
 	pipelines, _ := store_.GetPipelines("")
 	for _, pl := range pipelines {
-		log.WithFields(log.Fields{"name": pl.Name}).Debug("start pipeline")
 		parsed, err := yaml.ParseString(pl.Config)
 		if err != nil {
-			return nil
+			log.WithFields(log.Fields{"error": err, "name": pl.Name}).Debug("pipeline parse error")
+			continue
 		}
+		log.WithFields(log.Fields{"name": pl.Name}).Debug("start pipeline")
 
 		for _, s := range parsed.Services {
 			// log.WithFields(log.Fields{"name": s.Name}).Debug("run service")

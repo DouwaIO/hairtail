@@ -40,7 +40,7 @@ func (s *Service) RunPipeline(data []byte) error {
 
 	err := p.Run(data)
 	if err != nil {
-		log.WithFields(log.Fields{"error": err}).Error("Service pipeline error")
+		log.WithFields(log.Fields{"error": err}).Error("pipeline error")
 		return err
 	}
 
