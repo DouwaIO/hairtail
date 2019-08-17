@@ -38,7 +38,7 @@ func main() {
 
 	q, err := ch.QueueDeclare(
 		"hello", // name
-		false,   // durable
+		true,   // durable
 		false,   // delete when unused
 		false,   // exclusive
 		false,   // no-wait
@@ -49,12 +49,12 @@ func main() {
 	start := time.Now().Unix()
 	log.Println("start is ", start)
 
-	for i := 1; i <= 10; i++ {
+	for i := 1; i <= 1000; i++ {
 		var details []*Detail
 		for j := 1; j <= 100; j++ {
 			detail := &Detail{
-				FabricNo: fmt.Sprintf("f%d", j),
-				Line:     fmt.Sprintf("l%d", j),
+				FabricNo: fmt.Sprintf("f%d", rand.Intn(100)),
+				Line:     fmt.Sprintf("l%d", rand.Intn(100)),
 				Quantity: j,
 			}
 			details = append(details, detail)

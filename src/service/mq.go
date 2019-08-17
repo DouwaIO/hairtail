@@ -39,8 +39,8 @@ func MQ(s *Service) error {
 
 		q, err := ch.QueueDeclare(
 			topic, // name
-			false, // durable
-			// true,  // durable
+			// false, // durable
+			true,  // durable
 			false, // delete when unused
 			false, // exclusive
 			false, // no-wait

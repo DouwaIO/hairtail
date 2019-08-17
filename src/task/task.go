@@ -40,11 +40,22 @@ func (p *Plugin) Run(data []byte) (*Result, error) {
 		return Select(&params)
 	case "accumulate":
 		tx := p.TargetDB.Begin()
+		defer func() {
+			if err := recover(); err != nil {
+				tx.Rollback()
+			}
+		}()
+		if err := tx.Error; err != nil {
+			return nil, err
+		}
+		// if err := tx.Exec(`set transaction isolation level repeatable read`).Error; err != nil {
+		if err := tx.Exec(`set transaction isolation level read committed`).Error; err != nil {
+			return nil, err
+		}
 
 		params.DB = tx
 		result, err := Accumulate(&params)
 		if err != nil {
-			tx.Rollback()
 			return nil, err
 		}
 		tx.Commit()
