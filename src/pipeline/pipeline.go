@@ -16,7 +16,7 @@ type Pipeline struct {
 	Tasks    []*yaml.Task
 }
 
-var Queue queue.Queue
+// var Queue queue.Queue
 
 func (p *Pipeline) Run(data []byte) error {
 	log.Info("Pipeline running...")
