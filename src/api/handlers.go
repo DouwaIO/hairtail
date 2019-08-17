@@ -1,12 +1,12 @@
 package server
 
 import (
-	"net/http"
+	// "net/http"
 
 	"github.com/gin-gonic/gin"
 
 	//	"github.com/DouwaIO/hairtail/src/task"
-	task_pipeline "github.com/DouwaIO/hairtail/src/pipeline"
+	// task_pipeline "github.com/DouwaIO/hairtail/src/pipeline"
 	// task_service "github.com/DouwaIO/hairtail/src/service"
 	// //	"github.com/DouwaIO/hairtail/src/task/step"
 	// "github.com/DouwaIO/hairtail/src/model"
@@ -17,9 +17,9 @@ import (
 )
 
 func Dashboard(c *gin.Context) {
-	c.HTML(http.StatusOK,
-        "index.html",
-        gin.H{"queueInfo": task_pipeline.Queue.Info(c)})
+	// c.HTML(http.StatusOK,
+    //     "index.html",
+    //     gin.H{"queueInfo": task_pipeline.Queue.Info(c)})
 }
 
 // func Schema(c *gin.Context) {

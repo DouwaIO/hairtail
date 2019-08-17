@@ -46,7 +46,6 @@ func (p *Plugin) Run(data []byte) (*Result, error) {
 		result, err := Accumulate(&params)
 		if err != nil {
 			tx.Rollback()
-			log.Errorf("accumulate error: %s", err)
 			return nil, err
 		}
 		return result, nil

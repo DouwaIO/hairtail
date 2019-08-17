@@ -72,7 +72,7 @@ func MQ(s *Service) error {
 				// log.Debugf("MQ received a message: %s", d.Body)
 				log.Debug("MQ received a new message")
 
-				err := s.RunStep(d.Body)
+				err := s.RunPipeline(d.Body)
 				if err != nil {
 					log.Errorf("Pipeline step error: %s", err)
 					d.Ack(false)
