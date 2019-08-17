@@ -95,32 +95,37 @@ func run(c *cli.Context) error {
 	}
 
 	//启动数据库里面的service
-	pipelines, _ := store_.GetPipelines("")
-	for _, pl := range pipelines {
-		parsed, err := yaml.ParseString(pl.Config)
-		if err != nil {
-			log.WithFields(log.Fields{"error": err, "name": pl.Name}).Debug("pipeline parse error")
-			continue
-		}
-		log.WithFields(log.Fields{"name": pl.Name}).Debug("start pipeline")
-
-		for _, s := range parsed.Services {
-			// log.WithFields(log.Fields{"name": s.Name}).Debug("run service")
-			svc := service.Service{
-				Name:     s.Name,
-				Desc:     s.Desc,
-				Type:     s.Type,
-				Settings: s.Settings,
-				Steps:    parsed.Steps,
-				Store:    &store_,
-				TargetDB: targetDB,
-			}
-			err = svc.Run()
+	go func() {
+		pipelines, _ := store_.GetPipelines("")
+		for _, pl := range pipelines {
+			parsed, err := yaml.ParseString(pl.Config)
 			if err != nil {
-				return nil
+				log.WithFields(log.Fields{"error": err, "name": pl.Name}).Debug("pipeline parse error")
+				continue
+			}
+			log.WithFields(log.Fields{"name": pl.Name}).Debug("start pipeline")
+
+			for _, s := range parsed.Services {
+				// log.WithFields(log.Fields{"name": s.Name}).Debug("run service")
+				forever := make(chan bool)
+				for i := 1; i <= 30; i++ {
+					go func() {
+						svc := service.Service{
+							Name:     s.Name,
+							Desc:     s.Desc,
+							Type:     s.Type,
+							Settings: s.Settings,
+							Steps:    parsed.Steps,
+							Store:    &store_,
+							TargetDB: targetDB,
+						}
+						svc.Run()
+					}()
+				}
+				<-forever
 			}
 		}
-	}
+	}()
 
 	return http.ListenAndServe(
 		c.String("server-addr"),
