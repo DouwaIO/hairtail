@@ -11,8 +11,8 @@ import (
 
 	"github.com/DouwaIO/hairtail/src/router"
 	"github.com/DouwaIO/hairtail/src/router/middleware"
-	"github.com/DouwaIO/hairtail/src/service"
 	"github.com/DouwaIO/hairtail/src/store/datastore"
+	"github.com/DouwaIO/hairtail/src/service"
 	yaml "github.com/DouwaIO/hairtail/src/yaml/pipeline"
 	"github.com/DouwaIO/hairtail/src/model"
 )
@@ -109,6 +109,7 @@ func run(c *cli.Context) error {
 				// log.WithFields(log.Fields{"name": s.Name}).Debug("run service")
 				forever := make(chan bool)
 				for i := 1; i <= 30; i++ {
+				// for i := 1; i <= 1; i++ {
 					go func() {
 						svc := service.Service{
 							Name:     s.Name,

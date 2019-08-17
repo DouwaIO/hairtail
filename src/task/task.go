@@ -38,6 +38,8 @@ func (p *Plugin) Run(data []byte) (*Result, error) {
 		return Even(&params)
 	case "select":
 		return Select(&params)
+	case "sort":
+		return Sort(&params)
 	case "accumulate":
 		tx := p.TargetDB.Begin()
 		defer func() {
