@@ -107,8 +107,8 @@ func run(c *cli.Context) error {
 
 			for _, s := range parsed.Services {
 				// log.WithFields(log.Fields{"name": s.Name}).Debug("run service")
-				forever := make(chan bool)
-				for i := 1; i <= 30; i++ {
+				// forever := make(chan bool)
+				// for i := 1; i <= 30; i++ {
 				// for i := 1; i <= 1; i++ {
 					go func() {
 						svc := service.Service{
@@ -122,8 +122,8 @@ func run(c *cli.Context) error {
 						}
 						svc.Run()
 					}()
-				}
-				<-forever
+				// }
+				// <-forever
 			}
 		}
 	}()
