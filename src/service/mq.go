@@ -74,11 +74,11 @@ func MQ(s *Service) error {
 
 				err := s.RunPipeline(d.Body)
 				if err != nil {
-					d.Ack(false)
+					d.Nack(false, true)
 					continue
 				}
 
-				d.Ack(true)
+				d.Ack(false)
 			}
 		}()
 		log.Debugf("mq waiting for messages")

@@ -25,7 +25,7 @@ func main() {
 	app.Action = run
 	// app.Before = before
 	app.Flags = []cli.Flag{
-		cli.BoolFlag{
+		cli.BoolTFlag{
 			EnvVar: "HTAIL_DEBUG",
 			Name:   "debug",
 			Usage:  "enable server debug mode",
