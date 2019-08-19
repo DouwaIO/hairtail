@@ -1,25 +1,26 @@
 FROM golang:1.12-alpine AS compiler
 
 WORKDIR /go/src/github.com/DouwaIO/hairtail
-COPY . /app
+COPY . ./
+
 
 RUN export CGO_ENABLED=0 && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    cd /app/src && \
-    cp /app/src/views /app/ && \
+    cd src && \
+    cp -r views /views && \
     go vet && \
-    go build -o /app/htail && \
-    chmod +x /app/htail
+    go build -o /htail && \
+    chmod +x /htail
 
 FROM alpine:3.10
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
     apk add --update bash
 
-WORKDIR /
-COPY --from=compiler /app/htail /app/
-COPY --from=compiler /app/views /app/
+WORKDIR /app
+COPY --from=compiler /htail /app/
+COPY --from=compiler /views /app/views
 
 # Metadata params
 ARG VERSION
