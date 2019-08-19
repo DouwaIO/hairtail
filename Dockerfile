@@ -1,15 +1,16 @@
 FROM golang:1.12-alpine AS compiler
 
 WORKDIR /go/src/github.com/DouwaIO/hairtail
-COPY . ./
+COPY . /app
 
 RUN export CGO_ENABLED=0 && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    cd src && \
+    cd /app/src && \
+    cp /app/src/views /app/ && \
     go vet && \
-    go build -o /htail && \
-    chmod +x /htail
+    go build -o /app/htail && \
+    chmod +x /app/htail
 
 FROM alpine:3.10
 
@@ -17,7 +18,8 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
     apk add --update bash
 
 WORKDIR /
-COPY --from=compiler /htail /bin/
+COPY --from=compiler /app/htail /app/
+COPY --from=compiler /app/views /app/
 
 # Metadata params
 ARG VERSION
@@ -40,4 +42,4 @@ LABEL org.label-schema.build-date=$BUILD_DATE \
       org.label-schema.docker.cmd="docker run -d crun/kubectl"
 
 EXPOSE 8080
-CMD ["htail"]
+CMD ["/app/htail"]
