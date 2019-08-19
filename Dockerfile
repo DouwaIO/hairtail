@@ -1,4 +1,4 @@
-FROM golang:1.12-alpine3.8 AS compiler
+FROM golang:1.12-alpine AS compiler
 
 WORKDIR /go/src/github.com/DouwaIO/hairtail
 COPY . ./
@@ -11,7 +11,7 @@ RUN export CGO_ENABLED=0 && \
     go build -o /htail && \
     chmod +x /htail
 
-FROM alpine:3.8
+FROM alpine:3.10
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && \
     apk add --update bash
