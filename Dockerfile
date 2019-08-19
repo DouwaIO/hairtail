@@ -1,4 +1,4 @@
-FROM golang:1.10-alpine3.8 AS compiler
+FROM golang:1.12-alpine3.8 AS compiler
 
 WORKDIR /go/src/github.com/DouwaIO/hairtail
 COPY . ./
