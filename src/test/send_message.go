@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 	"time"
-	"math/rand"
+	// "math/rand"
 
 	"github.com/streadway/amqp"
 )
@@ -50,14 +50,14 @@ func main() {
 	start := time.Now().Unix()
 	log.Println("start is ", start)
 
-	for i := 1; i <= 1000; i++ {
+	for i := 1; i <= 10; i++ {
 		var details []*Detail
-		for j := 1; j <= 100; j++ {
+		for j := 1; j <= 10; j++ {
 			detail := &Detail{
-				// FabricNo: fmt.Sprintf("f%d", j),
-				FabricNo: fmt.Sprintf("f%d", rand.Intn(100)),
-				// Line:     fmt.Sprintf("l%d", j),
-				Line:     fmt.Sprintf("l%d", rand.Intn(100)),
+				FabricNo: fmt.Sprintf("f%d", j),
+				// FabricNo: fmt.Sprintf("f%d", rand.Intn(100)),
+				Line:     fmt.Sprintf("l%d", j),
+				// Line:     fmt.Sprintf("l%d", rand.Intn(100)),
 				Quantity: j,
 			}
 			details = append(details, detail)
