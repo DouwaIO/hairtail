@@ -16,5 +16,7 @@ steps:
     environment:
       - REPLICAS=1
       - INGRESS=hairtail.d.k.hscloud.top
+      - HTAIL_DB_URL="host=cpp-db port=5432 user=postgres dbname=hairtail sslmode=disable password=huansi@2017"
+      - HTAIL_TARGET_DB_URL="host=cpp-db port=5432 user=postgres dbname=hairtail sslmode=disable password=huansi@2017"
     when:
       branch: dev

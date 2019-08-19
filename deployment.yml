@@ -7,7 +7,6 @@ metadata:
     tier: hairtail
     type: go
 spec:
-  type: ClusterIP 
   selector:
     app: hairtail
     tier: hairtail
@@ -45,12 +44,9 @@ spec:
           ports:
             - name: http
               containerPort: 8080
-
           env:
             - name: CI_COMMIT
               value: {{CI_COMMIT}}
-
-
 ---
 apiVersion: extensions/v1beta1
 kind: Ingress
