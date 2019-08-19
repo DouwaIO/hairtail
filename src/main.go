@@ -110,7 +110,7 @@ func run(c *cli.Context) error {
 				// forever := make(chan bool)
 				// for i := 1; i <= 30; i++ {
 				// for i := 1; i <= 1; i++ {
-					go func() {
+					go func(s *yaml.Task) {
 						svc := service.Service{
 							Name:     s.Name,
 							Desc:     s.Desc,
@@ -121,7 +121,7 @@ func run(c *cli.Context) error {
 							TargetDB: targetDB,
 						}
 						svc.Run()
-					}()
+					}(s)
 				// }
 				// <-forever
 			}
