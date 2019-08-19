@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"time"
-	// "math/rand"
 
 	"github.com/streadway/amqp"
 )
@@ -39,7 +39,7 @@ func main() {
 
 	q, err := ch.QueueDeclare(
 		"hello", // name
-		true,   // durable
+		true,    // durable
 		false,   // delete when unused
 		false,   // exclusive
 		false,   // no-wait
@@ -50,15 +50,17 @@ func main() {
 	start := time.Now().Unix()
 	log.Println("start is ", start)
 
-	for i := 1; i <= 10; i++ {
+	for i := 1; i <= 10000; i++ {
 		var details []*Detail
 		for j := 1; j <= 10; j++ {
 			detail := &Detail{
-				FabricNo: fmt.Sprintf("f%d", j),
-				// FabricNo: fmt.Sprintf("f%d", rand.Intn(100)),
-				Line:     fmt.Sprintf("l%d", j),
-				// Line:     fmt.Sprintf("l%d", rand.Intn(100)),
-				Quantity: j,
+				// FabricNo: fmt.Sprintf("f%d", j),
+				FabricNo: fmt.Sprintf("f%d", rand.Intn(100)),
+				// FabricNo: fmt.Sprintf("f%d", i*1000+j),
+				// Line:     fmt.Sprintf("l%d", j),
+				Line:     fmt.Sprintf("l%d", rand.Intn(100)),
+				// Line:     fmt.Sprintf("l%d", i*1000+j),
+				Quantity: 1,
 			}
 			details = append(details, detail)
 		}
@@ -79,6 +81,6 @@ func main() {
 				Body:        body,
 			})
 		failOnError(err, "Failed to publish a message")
-		log.Println("send success")
+		log.Printf("send success: %d\n", rand.Intn(10))
 	}
 }
