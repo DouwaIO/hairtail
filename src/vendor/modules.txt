@@ -1,0 +1,64 @@
+# github.com/gin-contrib/sse v0.0.0-20190301062529-5545eab6dad3
+github.com/gin-contrib/sse
+# github.com/gin-gonic/gin v1.4.0
+github.com/gin-gonic/gin
+github.com/gin-gonic/gin/binding
+github.com/gin-gonic/gin/internal/json
+github.com/gin-gonic/gin/render
+# github.com/go-sql-driver/mysql v1.4.1
+github.com/go-sql-driver/mysql
+# github.com/golang/protobuf v1.3.1
+github.com/golang/protobuf/proto
+# github.com/jinzhu/gorm v1.9.10
+github.com/jinzhu/gorm
+github.com/jinzhu/gorm/dialects/postgres
+github.com/jinzhu/gorm/dialects/mysql
+# github.com/jinzhu/inflection v1.0.0
+github.com/jinzhu/inflection
+# github.com/json-iterator/go v1.1.6
+github.com/json-iterator/go
+# github.com/konsorten/go-windows-terminal-sequences v1.0.1
+github.com/konsorten/go-windows-terminal-sequences
+# github.com/lib/pq v1.1.1
+github.com/lib/pq
+github.com/lib/pq/hstore
+github.com/lib/pq/oid
+github.com/lib/pq/scram
+# github.com/mattn/go-isatty v0.0.7
+github.com/mattn/go-isatty
+# github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd
+github.com/modern-go/concurrent
+# github.com/modern-go/reflect2 v1.0.1
+github.com/modern-go/reflect2
+# github.com/pingcap/errors v0.11.0
+github.com/pingcap/errors
+# github.com/satori/go.uuid v1.2.0
+github.com/satori/go.uuid
+# github.com/shopspring/decimal v0.0.0-20180709203117-cd690d0c9e24
+github.com/shopspring/decimal
+# github.com/siddontang/go v0.0.0-20180604090527-bdc77568d726
+github.com/siddontang/go/hack
+# github.com/siddontang/go-log v0.0.0-20180807004314-8d05993dda07
+github.com/siddontang/go-log/log
+github.com/siddontang/go-log/loggers
+# github.com/siddontang/go-mysql v0.0.0-20190720022221-046188b858f9
+github.com/siddontang/go-mysql/replication
+github.com/siddontang/go-mysql/client
+github.com/siddontang/go-mysql/mysql
+github.com/siddontang/go-mysql/packet
+# github.com/sirupsen/logrus v1.4.2
+github.com/sirupsen/logrus
+# github.com/streadway/amqp v0.0.0-20190404075320-75d898a42a94
+github.com/streadway/amqp
+# github.com/ugorji/go v1.1.4
+github.com/ugorji/go/codec
+# github.com/urfave/cli v1.21.0
+github.com/urfave/cli
+# golang.org/x/sys v0.0.0-20190422165155-953cdadca894
+golang.org/x/sys/unix
+# google.golang.org/appengine v1.4.0
+google.golang.org/appengine/cloudsql
+# gopkg.in/go-playground/validator.v8 v8.18.2
+gopkg.in/go-playground/validator.v8
+# gopkg.in/yaml.v2 v2.2.2
+gopkg.in/yaml.v2

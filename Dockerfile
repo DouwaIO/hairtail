@@ -6,7 +6,7 @@ COPY . ./
 RUN export CGO_ENABLED=0 && \
     export GOOS=linux && \
     export GOARCH=amd64 && \
-    cd src/cmd && \
+    cd src && \
     go vet && \
     go build -o /htail && \
     chmod +x /htail
