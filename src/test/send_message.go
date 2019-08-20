@@ -29,7 +29,7 @@ type Bill struct {
 
 // 只能在安装 rabbitmq 的服务器上操作
 func main() {
-	conn, err := amqp.Dial("amqp://root:123456@47.97.182.182:32222/")
+	conn, err := amqp.Dial("")
 	failOnError(err, "Failed to connect to RabbitMQ")
 	defer conn.Close()
 
