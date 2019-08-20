@@ -45,13 +45,11 @@ func main() {
 			EnvVar: "HTAIL_DB_URL",
 			Name:   "db-url",
 			Usage:  "database url",
-			Value:  "host=47.110.154.127 port=30172 user=postgres dbname=hairtail sslmode=disable password=huansi@2017",
 		},
 		cli.StringFlag{
 			EnvVar: "HTAIL_TARGET_DB_URL",
 			Name:   "target-db-url",
 			Usage:  "target database url",
-			Value:  "host=47.110.154.127 port=30172 user=postgres dbname=hairtail sslmode=disable password=huansi@2017",
 		},
 	}
 
